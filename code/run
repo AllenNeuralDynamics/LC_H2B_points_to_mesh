@@ -1,0 +1,14 @@
+# #!/usr/bin/env bash
+# set -ex
+# echo "=== worker SCRIPT CALLED ==="
+# # This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
+# jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 mesh_and_figure_generation.ipynb
+
+#!/usr/bin/env bash
+set -euxo pipefail
+# This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
+jupyter nbconvert \
+    --to 'html' \
+    --ExecutePreprocessor.timeout=-1 \
+    --FilesWriter.build_directory=../results \
+    --execute mesh_and_figure_generation.ipynb

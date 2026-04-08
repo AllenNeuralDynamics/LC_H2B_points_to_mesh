@@ -1,0 +1,49 @@
+{
+	"version": 1,
+	"attached_datasets": [
+		{
+			"id": "04f36817-5e97-4019-810b-892a3c7920fa",
+			"mount": "SmartSPIM_798571_2025-06-30_11-55-40_stitched_2025-10-23_17-30-14"
+		},
+		{
+			"id": "129f4b49-be0e-4007-9a3f-7949fc5d7da0",
+			"mount": "SmartSPIM_807326_2025-08-26_13-40-47_stitched_2025-10-23_17-44-05"
+		},
+		{
+			"id": "2f0c6a5d-d7c2-468d-8e22-6fc99913fb11",
+			"mount": "SmartSPIM_807322_2025-08-26_10-41-04_stitched_2025-10-23_06-51-05"
+		},
+		{
+			"id": "437257b8-8df9-4bb8-ada8-8525959ab697",
+			"mount": "SmartSPIM_798576_2025-07-07_16-21-30_stitched_2025-07-22_17-26-01"
+		},
+		{
+			"id": "5e4c25dc-1c48-482f-8d86-052ac6dbafc5",
+			"mount": "SmartSPIM_807324_2025-08-25_11-34-40_stitched_2025-10-23_17-35-23"
+		},
+		{
+			"id": "673fe731-3a2b-42eb-b8f7-bde82d79e371",
+			"mount": "ccf_meshes"
+		},
+		{
+			"id": "779da73f-9d6d-46b2-94bb-1a7dbfaddd66",
+			"mount": "LC_H2B_trailmap_probabilities_and_point_calls"
+		},
+		{
+			"id": "7a5c8539-9030-4909-a772-975a0e2b40a8",
+			"mount": "SmartSPIM_807325_2025-08-25_14-33-31_stitched_2025-10-23_17-34-05"
+		},
+		{
+			"id": "a44aa562-a655-4a7f-864f-87c2426372a7",
+			"mount": "SmartSPIM_807327_2025-08-25_17-26-02_stitched_2025-10-23_17-33-43"
+		},
+		{
+			"id": "c712751d-f744-4fe8-9657-93a7084eab22",
+			"mount": "LC_percentile_meshes"
+		},
+		{
+			"id": "c9a36369-9b38-4080-ba7b-7923b81e96d2",
+			"mount": "SmartSPIM_798573_2025-06-30_15-07-30_stitched_2025-07-22_11-44-32"
+		}
+	]
+}
