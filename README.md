@@ -1,5 +1,7 @@
 This capsule contains a notebook used to generate and visualize the meshes described in figure 1 and S1.
 
+https://github.com/AllenNeuralDynamics/LC_H2B_points_to_mesh.git
+
 # Locus Coeruleus (LC) 3D Point Cloud Analysis and Mesh Generation
 
 ## Overview
