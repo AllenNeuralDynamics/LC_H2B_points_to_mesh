@@ -1,8 +1,16 @@
-This capsule contains a notebook used to generate and visualize the meshes described in figure 1 and S1.
-
-https://github.com/AllenNeuralDynamics/LC_H2B_points_to_mesh.git
-
 # Locus Coeruleus (LC) 3D Point Cloud Analysis and Mesh Generation
+
+This capsule contains the notebook used to generate and visualize the LC density meshes shown in figures 1 and S1 of the paper.
+
+**GitHub:** https://github.com/AllenNeuralDynamics/LC_H2B_points_to_mesh  
+**Code Ocean:** https://codeocean.allenneuraldynamics.org/capsule/8736312/tree  
+**Full collection:** https://codeocean.allenneuraldynamics.org/collections/9cf044ce-93c7-4c7e-bfa1-5d8c37aa42ec
+
+## Note on reproducibility
+
+This capsule is an **interactive notebook** and cannot be run reproducibly end to end. Two stages require manual judgement: the density-threshold selection (an interactive Plotly slider) and the mesh-repair steps, which are enabled selectively per mesh based on visual inspection (see **Usage**). Re-running the notebook therefore will not automatically reproduce the published meshes, and the canonical meshes published with the paper were not produced by this exact released version (the input point-call version that fed them may also differ).
+
+It is shared for transparency: it documents the exact analysis, mesh-generation, and figure code behind the published LC meshes and figures, even though those assets cannot be regenerated automatically from it.
 
 ## Overview
 
@@ -89,3 +97,7 @@ This notebook performs spatial analysis of locus coeruleus (LC) neurons across 8
 Run cells sequentially in a Jupyter environment. The notebook includes interactive widgets (sliders) for threshold selection. Mesh repair cells are semi-manual — uncomment specific repair steps as needed based on visual inspection of each mesh.
 
 Set `thresh = None` to operate on the core mesh (67th percentile), or set `thresh` to a specific integer (10–90) to operate on a percentile mesh.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
