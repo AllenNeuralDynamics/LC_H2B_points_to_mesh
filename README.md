@@ -23,6 +23,18 @@ This notebook performs spatial analysis of locus coeruleus (LC) neurons across 8
 - **Reference meshes**: Allen CCF brain structure meshes (`.obj`)
 - **Output**: Percentile-based LC surface meshes (`.obj`), registered point data (`.csv`), figures (`.svg`, `.png`, `.html`)
 
+### Input data assets
+
+The data assets attached to the capsule in `.codeocean/datasets.json` are the
+inputs this pipeline runs on. Only the four that are actually used are attached
+(the original capsule had attached several additional raw-imagery volumes that the
+notebook never referenced):
+
+- **Nuclear point calls (primary input):** `LC_H2B_trailmap_probabilities_and_point_calls` — per-mouse CCF-registered point calls for all 8 samples; the meshes are built from these.
+- **Pre-computed meshes:** `LC_percentile_meshes` — the canonical, distributed percentile/core meshes (plus `LC_points.csv`) consumed for the downstream counts, figures, and self-registration, and used as the comparison target when regenerating the core mesh.
+- **Allen CCF reference:** `ccf_meshes` — CCF brain-structure reference mesh for the 3D figure backdrop.
+- **One SmartSPIM whole-brain sample** (raw imagery, used only for the figure overlay): `SmartSPIM_807324_2025-08-25_11-34-40_stitched_2025-10-23_17-35-23`.
+
 ## Pipeline
 
 ### 1. Point Loading & Preprocessing

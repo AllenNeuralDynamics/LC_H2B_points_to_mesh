@@ -1,14 +1,17 @@
-# #!/usr/bin/env bash
-# set -ex
-# echo "=== worker SCRIPT CALLED ==="
-# # This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
-# jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 mesh_and_figure_generation.ipynb
-
 #!/usr/bin/env bash
 set -euxo pipefail
-# This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
+# Master script for the capsule's "Reproducible Run".
+#
+# 1. Regenerate the LC core mesh from the cell points and compare it to the
+#    published mesh. Writes new_core_mesh.obj, a side-by-side comparison figure,
+#    and a JSON report to ../results/reproduced/.
+# 2. Reproduce the paper figures from the canonical (distributed) meshes by
+#    executing the notebook to HTML in ../results/.
+
+python -u reproduce_core_mesh.py
+
 jupyter nbconvert \
     --to 'html' \
     --ExecutePreprocessor.timeout=-1 \
     --FilesWriter.build_directory=../results \
-    --execute mesh_and_figure_generation.ipynb
+    --execute explore_mesh.ipynb
