@@ -426,6 +426,61 @@ def plot_mesh_comparison(regenerated, published, save_path=None, seed=0):
 
 
 # --------------------------------------------------------------------------- #
+# Percentile-mesh survey grid (published vs fitted vs difference)
+# --------------------------------------------------------------------------- #
+def plot_percentile_grid(published, fitted, diffs, projection, percentiles,
+                         vmax=None, save_path=None):
+    """One projection's survey: 3 rows (published / fitted / pointwise difference)
+    x N columns (one per percentile). `published` and `fitted` are dicts
+    {threshold: trimesh}; `diffs` is {threshold: per-vertex distance of the fitted
+    mesh's vertices to the published surface}. `projection` is (horiz_idx, vert_idx,
+    label). The difference row shares one color scale (`vmax`) across all columns so
+    percentiles are directly comparable."""
+    hi, vi, plabel = projection
+    cols = [t for t in percentiles]
+    n = len(cols)
+    if vmax is None:
+        alld = np.concatenate([diffs[t] for t in cols if t in diffs])
+        vmax = float(np.percentile(alld, 98))
+
+    fig, axes = plt.subplots(3, n, figsize=(2.4 * n + 1.5, 8), squeeze=False)
+    row_labels = ['Published', 'Fitted (new)', 'Δ to published']
+    sc = None
+    for c, t in enumerate(cols):
+        pub, fit = published.get(t), fitted.get(t)
+        stack = [m.vertices for m in (pub, fit) if m is not None]
+        allpts = np.vstack(stack)
+        h0, h1 = allpts[:, hi].min(), allpts[:, hi].max()
+        v0, v1 = allpts[:, vi].min(), allpts[:, vi].max()
+        hp, vp = (h1 - h0) * 0.06 + 1, (v1 - v0) * 0.06 + 1
+        if pub is not None:
+            axes[0, c].scatter(pub.vertices[:, hi], pub.vertices[:, vi], s=1, c='0.55', linewidths=0)
+        if fit is not None:
+            axes[1, c].scatter(fit.vertices[:, hi], fit.vertices[:, vi], s=1, c='royalblue', linewidths=0)
+        if fit is not None and t in diffs:
+            sc = axes[2, c].scatter(fit.vertices[:, hi], fit.vertices[:, vi], s=1.5,
+                                    c=diffs[t], cmap='inferno', vmin=0, vmax=vmax, linewidths=0)
+        for r in range(3):
+            ax = axes[r, c]
+            ax.set_aspect('equal'); ax.set_xlim(h0 - hp, h1 + hp); ax.set_ylim(v0 - vp, v1 + vp)
+            ax.set_xticks([]); ax.set_yticks([])
+            for sp in ax.spines.values():
+                sp.set_visible(False)
+        axes[0, c].set_title(f'p{t}', fontsize=11)
+    for r, name in enumerate(row_labels):
+        axes[r, 0].set_ylabel(name, fontsize=12, fontweight='bold')
+    if sc is not None:
+        cb = fig.colorbar(sc, ax=axes[2, :].tolist(), location='bottom',
+                          shrink=0.4, pad=0.03, aspect=40)
+        cb.set_label('fitted vertex → published surface (µm)')
+    fig.suptitle(f'{plabel} projection — published vs fitted percentile meshes',
+                 fontsize=14, y=0.99)
+    if save_path:
+        fig.savefig(save_path, dpi=130, bbox_inches='tight')
+    return fig
+
+
+# --------------------------------------------------------------------------- #
 # Lightweight exploration helpers (used by the notebook)
 # --------------------------------------------------------------------------- #
 def plot_mesh_3d(mesh, points=None, color="orange", opacity=0.5, title=""):
