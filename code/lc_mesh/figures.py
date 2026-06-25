@@ -349,7 +349,7 @@ def plot_coronal_slices_with_pc2(df, core_mesh, y_planes=None, save_dir=None,
 # --------------------------------------------------------------------------- #
 # Regenerated-vs-published comparison
 # --------------------------------------------------------------------------- #
-def plot_mesh_comparison(regenerated, published, save_path=None, seed=0):
+def plot_mesh_comparison(regenerated, published, save_path=None, seed=0, cmax_um=2.5):
     """Compare a regenerated mesh against the published one.
 
     A 3-row layout (original mesh / regenerated mesh / pointwise difference) over the
@@ -360,6 +360,7 @@ def plot_mesh_comparison(regenerated, published, save_path=None, seed=0):
     from .analysis import nearest_surface_distances
 
     d = nearest_surface_distances(regenerated.vertices, published, seed=seed)
+    order = np.argsort(d)  # draw higher-deviation vertices on top
     rv, pv = regenerated.vertices, published.vertices
     vr, vp = regenerated.volume / 1e9, published.volume / 1e9
     pct = 100 * abs(vr - vp) / vp
@@ -393,8 +394,9 @@ def plot_mesh_comparison(regenerated, published, save_path=None, seed=0):
             elif r == 1:
                 ax.scatter(rv[:, hi], rv[:, vi], s=3, c='royalblue', alpha=0.5, linewidths=0)
             else:
-                sc = ax.scatter(rv[:, hi], rv[:, vi], s=4, c=d, cmap='viridis',
-                                alpha=0.85, linewidths=0, vmin=0, vmax=np.percentile(d, 99))
+                sc = ax.scatter(rv[order, hi], rv[order, vi], s=4, c=d[order],
+                                cmap='magma', alpha=0.95, linewidths=0,
+                                vmin=0, vmax=float(cmax_um))
             ax.set_xlim(hlim); ax.set_ylim(vlim)
             ax.set_aspect('equal', adjustable='box')
             ax.spines[['top', 'right']].set_visible(False)
@@ -409,8 +411,8 @@ def plot_mesh_comparison(regenerated, published, save_path=None, seed=0):
             elif bottom:
                 ax.set_ylabel(vlab)
         if bottom and sc is not None:
-            fig.colorbar(sc, cax=axs[3],
-                         label='regenerated vertex →\npublished surface (µm)')
+            fig.colorbar(sc, cax=axs[3], extend='max',
+                         label='deviation (µm)')
         else:
             axs[3].set_visible(False)
 
@@ -443,16 +445,20 @@ def plot_percentile_grid(published, fitted, diffs, projection, percentiles,
         alld = np.concatenate([diffs[t] for t in cols if t in diffs])
         vmax = float(np.percentile(alld, 98))
 
+    # SHARED coordinate frame across every panel, so size/growth is comparable
+    # (equal aspect + identical limits => 1 µm is the same length everywhere).
+    allpts = np.vstack([m.vertices for d in (published, fitted) for m in d.values()
+                        if m is not None])
+    h0, h1 = allpts[:, hi].min(), allpts[:, hi].max()
+    v0, v1 = allpts[:, vi].min(), allpts[:, vi].max()
+    hp, vp = (h1 - h0) * 0.03 + 1, (v1 - v0) * 0.03 + 1
+    HLIM, VLIM = (h0 - hp, h1 + hp), (v0 - vp, v1 + vp)
+
     fig, axes = plt.subplots(3, n, figsize=(2.4 * n + 1.5, 8), squeeze=False)
     row_labels = ['Published', 'Fitted (new)', 'Δ to published']
     sc = None
     for c, t in enumerate(cols):
         pub, fit = published.get(t), fitted.get(t)
-        stack = [m.vertices for m in (pub, fit) if m is not None]
-        allpts = np.vstack(stack)
-        h0, h1 = allpts[:, hi].min(), allpts[:, hi].max()
-        v0, v1 = allpts[:, vi].min(), allpts[:, vi].max()
-        hp, vp = (h1 - h0) * 0.06 + 1, (v1 - v0) * 0.06 + 1
         if pub is not None:
             axes[0, c].scatter(pub.vertices[:, hi], pub.vertices[:, vi], s=1, c='0.55', linewidths=0)
         if fit is not None:
@@ -462,7 +468,7 @@ def plot_percentile_grid(published, fitted, diffs, projection, percentiles,
                                     c=diffs[t], cmap='inferno', vmin=0, vmax=vmax, linewidths=0)
         for r in range(3):
             ax = axes[r, c]
-            ax.set_aspect('equal'); ax.set_xlim(h0 - hp, h1 + hp); ax.set_ylim(v0 - vp, v1 + vp)
+            ax.set_aspect('equal'); ax.set_xlim(*HLIM); ax.set_ylim(*VLIM)
             ax.set_xticks([]); ax.set_yticks([])
             for sp in ax.spines.values():
                 sp.set_visible(False)
@@ -497,6 +503,71 @@ def plot_mesh_3d(mesh, points=None, color="orange", opacity=0.5, title=""):
                                    name="points"))
     fig.update_layout(title=title, scene=dict(aspectmode="data"),
                       margin=dict(l=0, r=0, t=30, b=0))
+    return fig
+
+
+def plot_mesh_diff_3d(regenerated, published, save_path=None, highlight_um=0.0,
+                      opacity=0.6, show_edges=True, cmax_um=2.5, title=None):
+    """Interactive 3D view of the regenerated core mesh as a shaded grey solid
+    (lit faces, dark edge wireframe), with the vertices that actually deviate from
+    the published surface (> `highlight_um`) drawn as markers **colored and sized by
+    the deviation magnitude** (microns). Writes a fully self-contained HTML
+    (Plotly.js inlined) that opens in any browser and is safe to share.
+
+    The deviation is sub-nanometer for ~99.5% of vertices, so only the handful that
+    differ are marked; their color/size encode how far (max a few µm). Set
+    `show_edges=False` for a cleaner (and much smaller) file, or lower `opacity` to
+    see markers on the far side through the surface.
+    """
+    from .analysis import nearest_surface_distances
+
+    v, f = regenerated.vertices, regenerated.faces
+    d = nearest_surface_distances(v, published)
+    # markers for every vertex with deviation >= highlight_um (0 -> show all)
+    hot = d >= highlight_um
+    n_dev = int((d > 0.1).sum())
+    if title is None:
+        title = (f"Regenerated vs published core mesh — {n_dev} of {len(d)} vertices "
+                 f"({100 * n_dev / len(d):.2f}%) deviate &gt;0.1 µm; max {d.max():.2f} µm "
+                 f"(rest identical to &lt;1 nm)")
+
+    fig = go.Figure()
+    # shaded grey solid: lit faces so the 3-D form reads, flatshading shows facets
+    fig.add_trace(go.Mesh3d(
+        x=v[:, 0], y=v[:, 1], z=v[:, 2], i=f[:, 0], j=f[:, 1], k=f[:, 2],
+        color="rgb(180,180,185)", opacity=opacity, flatshading=True, name="surface",
+        lighting=dict(ambient=0.55, diffuse=0.8, specular=0.15, roughness=0.9),
+        lightposition=dict(x=2000, y=4000, z=8000), hoverinfo="skip", showscale=False))
+
+    # dark edge wireframe (one polyline broken by NaNs between edges)
+    if show_edges:
+        e = regenerated.edges_unique
+        ev = v[e]                                   # (E, 2, 3)
+        seg = np.full((len(e) * 3, 3), np.nan)
+        seg[0::3], seg[1::3] = ev[:, 0], ev[:, 1]
+        fig.add_trace(go.Scatter3d(
+            x=seg[:, 0], y=seg[:, 1], z=seg[:, 2], mode="lines",
+            line=dict(color="rgb(70,70,75)", width=1), name="edges",
+            hoverinfo="skip"))
+
+    # difference markers: uniform size, COLOR encodes the per-vertex deviation
+    if hot.any():
+        dm = d[hot]
+        fig.add_trace(go.Scatter3d(
+            x=v[hot, 0], y=v[hot, 1], z=v[hot, 2], mode="markers",
+            marker=dict(size=2, color=dm, colorscale="Magma",
+                        cmin=0.0, cmax=float(cmax_um),
+                        colorbar=dict(title="deviation<br>(µm)")),
+            name="vertices (colored by deviation)",
+            hovertemplate="Δ %{marker.color:.3f} µm<extra></extra>"))
+
+    fig.update_layout(
+        title=title, scene=dict(aspectmode="data",
+                                xaxis_title="x (µm)", yaxis_title="y (µm)",
+                                zaxis_title="z (µm)"),
+        legend=dict(x=0, y=1), margin=dict(l=0, r=0, t=40, b=0))
+    if save_path:
+        fig.write_html(save_path, include_plotlyjs=True)
     return fig
 
 

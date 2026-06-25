@@ -5,7 +5,7 @@ a freshly regenerated mesh is from the published one (volume, surface distance,
 topology), which is what a regenerate-and-revalidate (B') claim rests on.
 """
 import numpy as np
-from scipy.spatial import cKDTree
+import trimesh
 
 try:
     from tqdm import tqdm
@@ -51,15 +51,13 @@ def mesh_stats(mesh):
 
 
 def _surface_distances(a, b, n_sample=50000, seed=0):
-    """One-directional surface distances: sampled points on `a` -> nearest
-    surface of `b`. Uses surface sampling + KDTree (deterministic given seed)."""
+    """One-directional surface distances: points sampled on `a`'s surface to the
+    EXACT nearest point on `b`'s surface (trimesh proximity). Sampling the *other*
+    surface and using a KDTree would impose a floor of ~the sample spacing (a few
+    µm here), which badly overstates the distance between near-identical meshes."""
     rng = np.random.RandomState(seed)
-    # sample_surface accepts a seed via numpy global in some versions; sample
-    # explicitly and reproducibly with our own RNG over faces.
     pts_a, _ = _sample_surface(a, n_sample, rng)
-    pts_b, _ = _sample_surface(b, n_sample, rng)
-    d_ab = cKDTree(pts_b).query(pts_a, k=1)[0]
-    return d_ab
+    return trimesh.proximity.ProximityQuery(b).on_surface(pts_a)[1]
 
 
 def _sample_surface(mesh, n, rng):
@@ -78,11 +76,10 @@ def _sample_surface(mesh, n, rng):
 
 
 def nearest_surface_distances(points, mesh, n_sample=80000, seed=0):
-    """Distance from each of `points` (N x 3) to the surface of `mesh`, via
-    deterministic surface sampling + KDTree. Used to color the comparison figure."""
-    rng = np.random.RandomState(seed)
-    pts_mesh, _ = _sample_surface(mesh, n_sample, rng)
-    return cKDTree(pts_mesh).query(np.asarray(points), k=1)[0]
+    """EXACT distance from each of `points` (N x 3) to the surface of `mesh`
+    (trimesh proximity). Used to color the comparison figure, so it reflects true
+    geometric deviation rather than surface-sampling resolution."""
+    return trimesh.proximity.ProximityQuery(mesh).on_surface(np.asarray(points))[1]
 
 
 def compare_meshes(regenerated, published, n_sample=50000, seed=0):
