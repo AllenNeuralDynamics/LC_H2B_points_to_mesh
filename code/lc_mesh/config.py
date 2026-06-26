@@ -12,8 +12,15 @@ SCALE_TO_UM = 1000.0       # raw .npy coords are multiplied by 1000, cell 2
 # LC crop box in reflected CCF space (cell 7)
 LC_CROP = dict(y_min=9000, y_max=12000, x_min=3000, z_min=3000,
                exclude_z_gt=4800, exclude_y_gt=10800)
-SAMPLE_KEYWORDS = ['798571', '798573', '798576', '807322',
-                   '807324', '807325', '807326', '807327']
+# Sample load ORDER matters: the surfel reconstruction is order-sensitive, so the
+# published core mesh is only reproduced if the per-sample .npy files are concatenated
+# in the same order Drew's original run used. reflect_and_crop / compute_knn_density
+# both preserve row order, so this list fixes the point order end-to-end. The order
+# below is Drew's actual run order, recovered from the 'file' column of LC_points.csv
+# (it is NOT sorted -- it was glob/filesystem order). A sorted order changes ~5000
+# vertices vs the published mesh; this order reproduces it (to the surfel float residual).
+SAMPLE_KEYWORDS = ['807324', '807322', '798576', '807326',
+                   '798571', '807325', '798573', '807327']
 
 # --- kNN density (cell 9) ---
 KNN_K = 100                # neighbours (excluding self) averaged for local density
