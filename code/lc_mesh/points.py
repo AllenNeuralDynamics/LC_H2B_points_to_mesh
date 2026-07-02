@@ -26,10 +26,15 @@ def load_ccf_points(data_root, keywords=None):
     Applies the original coordinate transform: scale to microns, flip z and x.
     """
     keywords = keywords or config.SAMPLE_KEYWORDS
+    # Point ORDER is load-bearing: the downstream surfel reconstruction is
+    # order-sensitive (shuffling the same points moves ~5000 mesh vertices). The
+    # order is fixed here = `keywords` order (pinned to Drew's run in config) with a
+    # sorted glob within each keyword, so it can't drift with raw glob/filesystem
+    # order. Do NOT replace this with an unordered glob over all samples at once.
     ccf_files = []
     for kw in keywords:
         pattern = os.path.join(data_root, f'*{kw}*', '*ccf*.npy')
-        ccf_files.extend(glob.glob(pattern, recursive=False))
+        ccf_files.extend(sorted(glob.glob(pattern, recursive=False)))
     if not ccf_files:
         raise FileNotFoundError(f"No matching ccf .npy files found under {data_root}")
 
