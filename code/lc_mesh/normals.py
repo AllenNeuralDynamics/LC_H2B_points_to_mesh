@@ -3,10 +3,10 @@
 Faithful extraction of notebook cell 16. The mesh pipeline always supplies
 interior points, so `orient_complex_shape_normals` uses the interior-guided path
 (`orient_normals_with_interior`); the patch/MST fallback is preserved for parity
-but is not exercised by the published pipeline.
+but is not exercised by the mesh pipeline.
 
 NOTE (preserved from the original): `estimate_normals` ignores its `k` argument
-and always uses 40 neighbours. Kept as-is so results match the published meshes.
+and always uses 40 neighbours. Kept as-is to preserve the original recipe.
 """
 import numpy as np
 from scipy.sparse import csr_matrix
@@ -81,7 +81,7 @@ def orient_normals_with_interior(shell_points, normals, interior_points,
 
 def propagate_through_patches(shell_points, normals, patch_size=100, overlap=0.5):
     """Patch/MST-based orientation fallback (used only when no interior points
-    are available). Preserved for parity; not part of the published path."""
+    are available). Preserved for parity; not part of the mesh pipeline."""
     n_points = len(shell_points)
     oriented = normals.copy()
     n_patches = max(1, int(n_points / (patch_size * (1 - overlap / 2))))

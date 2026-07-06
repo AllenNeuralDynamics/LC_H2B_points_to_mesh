@@ -2,8 +2,7 @@
 set -euxo pipefail
 # Master script for the capsule's "Reproducible Run".
 #
-# Regenerate the LC core mesh from the raw cell points and compare it to the
-# published mesh. Writes new_core_mesh.obj, a side-by-side comparison figure, and a
-# JSON report to ../results/reproduced/.
+# Generate the LC core mesh and the nine percentile meshes from the raw cell point
+# calls. Writes new_core_mesh.obj, percentile_{10..90}.obj, and a JSON report.
 
-python -u reproduce_core_mesh.py
+python -u reproduce_meshes.py

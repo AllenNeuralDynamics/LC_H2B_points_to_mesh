@@ -1,15 +1,14 @@
-"""lc_mesh — library for reproducing the LC density meshes and figures.
+"""lc_mesh: library for reproducibly generating the LC core mesh and the nine
+percentile meshes from the raw cell point calls.
 
 Pure functions for: loading/preprocessing the CCF-registered points, kNN density
-mapping, surfel surface reconstruction + repair, point-in-mesh counting, EMD
-self-registration, mesh comparison, and the paper figures. See `code/lc_mesh/
-README.md` for usage and reproduction fidelity.
+mapping, surfel surface reconstruction + repair, and point-in-mesh counting. All
+mesh parameters live in `config.py`; see `code/lc_mesh/README.md` for usage.
 """
-from . import config, figures, registration
+from . import config
 from .points import (
     load_ccf_points, reflect_and_crop, compute_knn_density,
-    build_lc_points, load_lc_points_csv, load_published_meshes,
-    select_shell_and_interior,
+    build_lc_points, select_shell_and_interior,
 )
 from .normals import (
     estimate_normals, orient_normals_with_interior, orient_complex_shape_normals,
@@ -18,21 +17,16 @@ from .meshing import (
     seal_holes, shrink_mesh_along_normals, generate_surface_mesh, repair_mesh,
 )
 from .analysis import (
-    count_points_in_mesh, count_points_in_meshes, mesh_stats, compare_meshes,
+    count_points_in_mesh, count_points_in_meshes, mesh_stats,
 )
-from .pipeline import (
-    make_core_mesh, make_percentile_mesh, make_self_registered_core_mesh,
-)
-from .registration import self_register
+from .pipeline import make_core_mesh, make_percentile_mesh
 
 __all__ = [
-    "config", "figures", "registration",
+    "config",
     "load_ccf_points", "reflect_and_crop", "compute_knn_density",
-    "build_lc_points", "load_lc_points_csv", "load_published_meshes",
-    "select_shell_and_interior",
+    "build_lc_points", "select_shell_and_interior",
     "estimate_normals", "orient_normals_with_interior", "orient_complex_shape_normals",
     "seal_holes", "shrink_mesh_along_normals", "generate_surface_mesh", "repair_mesh",
-    "count_points_in_mesh", "count_points_in_meshes", "mesh_stats", "compare_meshes",
-    "make_core_mesh", "make_percentile_mesh", "make_self_registered_core_mesh",
-    "self_register",
+    "count_points_in_mesh", "count_points_in_meshes", "mesh_stats",
+    "make_core_mesh", "make_percentile_mesh",
 ]

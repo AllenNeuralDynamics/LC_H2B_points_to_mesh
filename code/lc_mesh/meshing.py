@@ -158,7 +158,7 @@ def repair_mesh(mesh, pitch=3, max_distance=5, keep_distance=2,
     faces. Returns a new (ideally watertight) trimesh.Trimesh.
 
     `shrink` (float) and `extra_seal_passes` (int) reproduce the optional cells
-    32/33; both default OFF, matching the published *core* mesh recipe.
+    32/33; both default off, which is the core mesh recipe.
     """
     vertex_distance = _vertex_surface_distance(mesh, pitch, max_distance, verbose=verbose)
 

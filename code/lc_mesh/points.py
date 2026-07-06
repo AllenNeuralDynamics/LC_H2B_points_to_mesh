@@ -1,19 +1,14 @@
 """Point loading, hemisphere reflection, LC cropping, and kNN-density mapping.
 
-Faithful extraction of notebook cells 2, 7, 9. Two entry points:
-
-- `build_lc_points()` runs the full pipeline from the raw per-sample `.npy`
-  files (needs the CodeOcean data mount).
-- `load_lc_points_csv()` loads the published `LC_points.csv`, which already
-  carries `kNN_percentile` — letting you reproduce meshes locally without the
-  raw data or recomputing kNN.
+Faithful extraction of notebook cells 2, 7, 9. `build_lc_points()` runs the full
+pipeline from the raw per-sample `.npy` files (needs the CodeOcean data mount) and
+returns the LC_only_points frame that feeds mesh generation.
 """
 import glob
 import os
 
 import numpy as np
 import pandas as pd
-import trimesh
 from scipy.stats import rankdata
 from sklearn.neighbors import NearestNeighbors
 
@@ -85,24 +80,6 @@ def build_lc_points(data_root, keywords=None):
     df = load_ccf_points(data_root, keywords)
     df = reflect_and_crop(df)
     return compute_knn_density(df)
-
-
-def load_lc_points_csv(csv_path):
-    """Load the published `LC_points.csv` (already carries `kNN_percentile`)."""
-    return pd.read_csv(csv_path)
-
-
-def load_published_meshes(mesh_dir):
-    """Load the canonical published meshes from the LC_percentile_meshes asset
-    (cell 36/39): returns (percentile_meshes dict keyed by int threshold,
-    core_mesh). These are the distributed meshes used in the paper's figures."""
-    percentile_meshes = {}
-    for fname in os.listdir(mesh_dir):
-        if fname.startswith('percentile') and fname.endswith('.obj'):
-            key = int(os.path.splitext(fname)[0].split('_')[1])
-            percentile_meshes[key] = trimesh.load(os.path.join(mesh_dir, fname))
-    core_mesh = trimesh.load(os.path.join(mesh_dir, 'new_core_mesh.obj'))
-    return percentile_meshes, core_mesh
 
 
 def select_shell_and_interior(df, shell_lo, shell_hi, interior_hi,
