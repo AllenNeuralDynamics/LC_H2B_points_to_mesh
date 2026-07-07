@@ -12,10 +12,12 @@ trimesh==4.11.1
 open3d==0.18.0
 point-cloud-utils==0.34.0
 tqdm==4.67.3
-# figures + notebook
+# figures + notebook (nbconvert/ipykernel execute the notebook headlessly in code/run)
 matplotlib==3.10.8
 plotly==6.5.2
 ipywidgets==8.1.8
+nbconvert==7.17.0
+ipykernel==7.1.0
 # raw-image max-projection overlay figure
 zarr==2.18.3
 tifffile==2025.5.10

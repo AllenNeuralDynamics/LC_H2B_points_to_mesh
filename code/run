@@ -2,7 +2,14 @@
 set -euxo pipefail
 # Master script for the capsule's "Reproducible Run".
 #
-# Generate the LC core mesh and the nine percentile meshes from the raw cell point
-# calls. Writes new_core_mesh.obj, percentile_{10..90}.obj, and a JSON report.
+# 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point
+#    calls (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).
+# 2. Execute the figures notebook headlessly so it regenerates the paper figures from
+#    those meshes and saves them to ../results (kNN heatmaps, 3D mesh HTMLs, per-sample
+#    counts, coronal slices, raw-image overlay), matching the original capsule's outputs.
 
 python -u reproduce_meshes.py
+
+python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true
+jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=2400 \
+    --output /root/capsule/results/explore_mesh_executed.ipynb explore_mesh.ipynb

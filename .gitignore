@@ -170,3 +170,5 @@ code/data/model-weights/denardo_model3.hdf5
 code/data/model-weights/FOS_model_210815.hdf5
 code/data/model-weights/SOMA_model_211021.hdf5
 s3-ants-cache/aind-open-data__SmartSPIM-template_2024-05-16_11-26-14__2c21b5f003ef__spim_template_to_ccf_syn_1InverseWarp_25.nii.gz
+# Standalone AIND package (lives at github.com/AllenNeuralDynamics/aind-zarr-utils); not part of this capsule
+/aind-zarr-utils/
