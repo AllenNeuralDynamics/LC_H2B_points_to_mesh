@@ -128,6 +128,8 @@ nest-asyncio==1.6.0
     # via
     #   dash
     #   ipykernel
+networkx==3.4.2
+    # via -r environment/requirements.in
 numcodecs==0.13.1
     # via zarr
 numpy==1.26.4
@@ -216,6 +218,8 @@ rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
+rtree==1.4.1
+    # via -r environment/requirements.in
 scikit-learn==1.7.2
     # via
     #   -r environment/requirements.in

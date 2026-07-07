@@ -9,6 +9,8 @@ pandas==2.3.3
 scipy==1.15.3
 scikit-learn==1.7.2
 trimesh==4.11.1
+networkx==3.4.2          # trimesh.repair (fix_winding/fill_holes/fix_normals) needs it
+rtree==1.4.1             # trimesh spatial index / point-in-mesh containment
 open3d==0.18.0
 point-cloud-utils==0.34.0
 tqdm==4.67.3
