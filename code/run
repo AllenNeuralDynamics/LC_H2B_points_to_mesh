@@ -11,5 +11,7 @@ set -euxo pipefail
 python -u reproduce_meshes.py
 
 python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true
+# Strict execution (no --allow-errors): every figure is an expected output, so if any
+# figure cell fails the run fails, rather than silently producing an incomplete result.
 jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=2400 \
     --output /root/capsule/results/explore_mesh_executed.ipynb explore_mesh.ipynb
