@@ -1,20 +1,3 @@
-# /// script
-# requires-python = "==3.10.*"
-# dependencies = [
-#   # Mirrors the canonical pinned environment in ../environment/postInstall so the
-#   # script also runs standalone via uv. Python 3.10, geometry stack pinned.
-#   "numpy==1.26.4",
-#   "pandas==2.3.3",
-#   "scipy==1.15.3",
-#   "scikit-learn==1.7.2",
-#   "trimesh==4.11.1",
-#   "networkx==3.4.2",
-#   "rtree==1.4.1",
-#   "open3d==0.18.0",
-#   "point-cloud-utils==0.34.0",
-#   "tqdm==4.67.3",
-# ]
-# ///
 """Generate the LC core mesh and the nine percentile meshes from the raw cell point calls.
 
 This is the entry point for the capsule's Reproducible Run. It runs the full pipeline

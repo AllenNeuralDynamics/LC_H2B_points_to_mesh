@@ -13,5 +13,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY postInstall /
+COPY requirements.txt /requirements.txt
 RUN --mount=type=secret,id=secrets . /run/secrets/secrets \
     && /postInstall

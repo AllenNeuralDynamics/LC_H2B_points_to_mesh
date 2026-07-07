@@ -49,52 +49,10 @@ code-server --extensions-dir=/.vscode/extensions --install-extension ms-python.p
 
 curl -LsSf https://astral.sh/uv/install.sh | \
     UV_INSTALL_DIR=/usr/local/bin sh
-# --- Pinned dependencies: maximum-fidelity reconstruction of the original
-# mesh-generation environment (2026-02-02, capsule c995ccc6, computation
-# 8c0459de "Run 61097"). The mesh libraries were installed ad hoc in that
-# interactive session and were never pinned anywhere, so the versions below are the
-# latest releases on/before the mesh-generation date, resolved for this image's
-# Python 3.10 (e.g. open3d 0.18.0; 0.19 dropped 3.10 wheels). `--exclude-newer`
-# bounds transitive dependencies to the same point in time. aind-zarr-utils is
-# pinned to its commit as of that date.
-CUTOFF=2026-02-03
 
-uv pip install --system --exclude-newer "$CUTOFF" \
-    "git+https://github.com/AllenNeuralDynamics/aind-zarr-utils.git@e47cc5078aa9dbfa0499f471a817f724ea74551b"
-
-# list of requirements
-cat > /tmp/requirements.txt <<'REQ'
-dask==2026.1.2
-dask-image==2025.11.0
-dask[distributed]==2026.1.2
-h5py==3.15.1
-matplotlib==3.10.8
-numpy==1.26.4
-nbconvert==7.17.0
-oauthlib==3.3.1
-opencv-python==4.11.0.86
-open3d==0.18.0
-pandas==2.3.3
-pillow==12.1.0
-plotly==6.5.2
-pot==0.9.6.post1
-point-cloud-utils==0.34.0
-scikit-image==0.25.2
-scikit-learn==1.7.2
-scipy==1.15.3
-seaborn==0.13.2
-tifffile==2025.5.10
-torch==2.10.0
-tqdm==4.67.3
-umap-learn==0.5.11
-rtree==1.4.1
-trimesh==4.11.1
-zarr==2.18.3
-ipykernel==7.1.0
-openpyxl==3.1.5
-ipympl==0.10.0
-statsmodels==0.14.6
-antspyx==0.6.2
-REQ
-
-uv pip install --no-cache --system --exclude-newer "$CUTOFF" -r /tmp/requirements.txt && rm /tmp/requirements.txt
+# --- Pinned Python environment. The fully-resolved, version-pinned dependency set lives
+# in the committed environment/requirements.txt (compiled from environment/requirements.in
+# with `uv pip compile ... --exclude-newer 2026-02-03`), which the Dockerfile COPYs to
+# /requirements.txt. Installing from that lock is what makes the environment reproducible;
+# --exclude-newer bounds resolution to the original mesh-generation date as a safety net.
+uv pip install --no-cache --system --exclude-newer 2026-02-03 -r /requirements.txt

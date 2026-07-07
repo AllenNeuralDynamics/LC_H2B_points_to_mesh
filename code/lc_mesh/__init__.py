@@ -2,10 +2,10 @@
 percentile meshes from the raw cell point calls.
 
 Pure functions for: loading/preprocessing the CCF-registered points, kNN density
-mapping, surfel surface reconstruction + repair, and point-in-mesh counting. All
-mesh parameters live in `config.py`; see `code/lc_mesh/README.md` for usage.
+mapping, surfel surface reconstruction + repair, point-in-mesh counting, and the
+paper figures. All mesh parameters live in `config.py`; see `code/lc_mesh/README.md`.
 """
-from . import config
+from . import config, figures
 from .points import (
     load_ccf_points, reflect_and_crop, compute_knn_density,
     build_lc_points, select_shell_and_interior,
@@ -22,7 +22,7 @@ from .analysis import (
 from .pipeline import make_core_mesh, make_percentile_mesh
 
 __all__ = [
-    "config",
+    "config", "figures",
     "load_ccf_points", "reflect_and_crop", "compute_knn_density",
     "build_lc_points", "select_shell_and_interior",
     "estimate_normals", "orient_normals_with_interior", "orient_complex_shape_normals",

@@ -14,13 +14,16 @@ are pure (no notebook state).
 | `meshing.py` | `seal_holes`, surfel surface generation, repair (cavern strip, seal, broken/solitary-face cleanup) |
 | `pipeline.py` | `make_core_mesh`, `make_percentile_mesh` (select -> generate -> repair) |
 | `analysis.py` | Point-in-mesh counting; `mesh_stats` (vertex/face counts, volume, watertightness, Euler number) |
+| `figures.py` | Paper figures (kNN heatmaps, 3D renderings, per-sample counts, coronal slices, raw-image overlay) + exploration helpers |
 
-## Entry point
+## Entry points
 
-[`../reproduce_meshes.py`](../reproduce_meshes.py) is the entry point: it builds the LC
-points from the raw point calls and generates all ten meshes, writing the `.obj` files
-and a JSON report to `results/`. It runs in the capsule environment and is also
-self-contained via PEP 723 for standalone use (`uv run code/reproduce_meshes.py`).
+- [`../reproduce_meshes.py`](../reproduce_meshes.py) builds the LC points from the raw
+  point calls and generates all ten meshes, writing the `.obj` files and a JSON report to
+  `results/`. Run as `python code/reproduce_meshes.py` in the capsule environment.
+- [`../explore_mesh.ipynb`](../explore_mesh.ipynb) is a thin notebook that reproduces the
+  paper figures from those generated meshes and lets you explore the parameters. It only
+  calls `lc_mesh` functions.
 
 ## Parameters
 
@@ -30,11 +33,13 @@ thresholds, surfel radius, watertight resolution, smoothing) and its repair sett
 `repair` value of `None` means no extra repair pass is applied. `make_percentile_mesh`
 reads these directly, so every mesh is generated deterministically from documented values.
 
-## Dependencies & pinning (CodeOcean-native)
+## Dependencies & pinning
 
-The canonical pinned environment lives in
-[`../../environment/postInstall`](../../environment/postInstall), the standard CodeOcean
-way. It pins the geometry stack for the image's **Python 3.10** (`open3d==0.18.0`,
-`trimesh==4.11.1`, `point-cloud-utils==0.34.0`, and the rest), with `--exclude-newer`
-bounding transitive deps to a fixed point in time. `reproduce_meshes.py`'s PEP 723 block
-mirrors the geometry-relevant subset so the script also runs standalone via `uv`.
+Top-level (directly imported) packages are listed in
+[`../../environment/requirements.in`](../../environment/requirements.in); the fully
+resolved, version-pinned lock is compiled from it into
+[`../../environment/requirements.txt`](../../environment/requirements.txt) with
+`uv pip compile ... --python-version 3.10 --python-platform linux --exclude-newer 2026-02-03`.
+The [`Dockerfile`](../../environment/Dockerfile) copies the lock into the image and
+[`postInstall`](../../environment/postInstall) installs from it. To change a dependency,
+edit `requirements.in` and recompile the lock.

@@ -19,9 +19,13 @@ Every parameter (point ordering, density k, per-mesh shell/interior thresholds, 
 
 ## Input data
 
-The capsule attaches a single dataset (see [`.codeocean/datasets.json`](.codeocean/datasets.json)):
+The capsule attaches three datasets (see [`.codeocean/datasets.json`](.codeocean/datasets.json)):
 
 - **`LC_H2B_trailmap_probabilities_and_point_calls`**: per-mouse CCF-registered nuclear point calls for all 8 SmartSPIM samples (IDs `798571`, `798573`, `798576`, `807322`, `807324`, `807325`, `807326`, `807327`). The meshes are built entirely from these.
+- **`ccf_meshes`**: Allen CCF brain-structure reference mesh, used only as the brain-outline backdrop in the 3D figures.
+- **`SmartSPIM_807324_...`**: one raw stitched light-sheet volume, used only for the raw-image max-projection overlay figure.
+
+No previously generated LC mesh is attached; the meshes are produced from the point calls.
 
 ## Pipeline
 
@@ -40,16 +44,17 @@ The capsule attaches a single dataset (see [`.codeocean/datasets.json`](.codeoce
 | `meshing.py` | Surfel surface generation and repair (hole seal, cavern strip, broken/solitary-face cleanup) |
 | `pipeline.py` | `make_core_mesh` and `make_percentile_mesh` (select -> generate -> repair) |
 | `analysis.py` | Point-in-mesh counting and basic mesh descriptors (`mesh_stats`) |
+| `figures.py` | The paper figures (kNN heatmaps, 3D mesh renderings, per-sample counts, coronal slices, raw-image overlay) + exploration helpers |
+
+## Figures
+
+[`code/explore_mesh.ipynb`](code/explore_mesh.ipynb) is a thin notebook that reproduces the paper figures **from the meshes this capsule generates**, and provides interactive controls to explore the mesh-generation parameters. Run `code/reproduce_meshes.py` first so the meshes exist in `results/`, then run the notebook; all real logic lives in `lc_mesh.figures`.
 
 ## Environment
 
-The canonical pinned environment lives in [`environment/postInstall`](environment/postInstall) (Python 3.10). `code/reproduce_meshes.py` mirrors the geometry-relevant subset in a PEP 723 header so it also runs standalone:
+The environment is pinned as a lockfile: [`environment/requirements.in`](environment/requirements.in) lists the top-level (directly imported) packages, and [`environment/requirements.txt`](environment/requirements.txt) is the fully-resolved, version-pinned set compiled from it (`uv pip compile ... --exclude-newer 2026-02-03`). [`environment/Dockerfile`](environment/Dockerfile) copies the lock into the image and [`environment/postInstall`](environment/postInstall) installs from it (Python 3.10). To change a dependency, edit `requirements.in` and recompile `requirements.txt`.
 
-```bash
-uv run code/reproduce_meshes.py --from-raw /path/to/point_calls --out ./results
-```
-
-Core packages: `numpy`, `scipy`, `pandas`, `scikit-learn` (kNN/PCA), `trimesh` (mesh ops, repair, voxelization), `open3d` (smoothing), `point_cloud_utils` (surface reconstruction, watertight conversion).
+Core packages: `numpy`, `scipy`, `pandas`, `scikit-learn` (kNN/PCA), `trimesh` (mesh ops, repair, voxelization), `open3d` (smoothing), `point_cloud_utils` (surface reconstruction, watertight conversion), `matplotlib`/`plotly`/`ipywidgets` (figures + notebook), `zarr`/`tifffile` (raw-image overlay).
 
 ## License
 
