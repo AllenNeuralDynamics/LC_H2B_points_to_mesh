@@ -18,8 +18,8 @@ LC_CROP = dict(y_min=9000, y_max=12000, x_min=3000, z_min=3000,
 # end-to-end. The order below is the order used to define the recipe (a sorted order
 # would change ~5000 mesh vertices); load_ccf_points sorts the glob within each keyword
 # so filesystem order cannot perturb it.
-SAMPLE_KEYWORDS = ['807324', '807322', '798576', '807326',
-                   '798571', '807325', '798573', '807327']
+SAMPLE_KEYWORDS = ['798571', '798573', '798576', '807322',
+                   '807324', '807325', '807326', '807327']
 
 # --- kNN density (cell 9) ---
 KNN_K = 100                # neighbours (excluding self) averaged for local density
