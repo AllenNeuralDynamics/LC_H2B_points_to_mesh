@@ -4,9 +4,9 @@ set -euxo pipefail
 #
 # 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point
 #    calls (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).
-# 2. Execute the figures notebook headlessly so it regenerates the paper figures from
-#    those meshes and saves them to ../results (kNN heatmaps, 3D mesh HTMLs, per-sample
-#    counts, coronal slices, raw-image overlay), matching the original capsule's outputs.
+# 2. Execute the figures notebook headlessly so it generates the paper figures from those
+#    meshes and saves them to ../results (kNN heatmaps, 3D mesh HTMLs, per-sample counts,
+#    coronal slices, raw-image overlay).
 
 python -u reproduce_meshes.py
 
