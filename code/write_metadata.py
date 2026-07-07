@@ -37,10 +37,10 @@ UTC = timezone.utc
 
 # --- the asset this capsule produces --------------------------------------------------
 # TODO(name): confirm the name the saved data asset will carry. The metadata `name` must
-# match the asset it describes. A stable descriptive name is used here (these LC meshes are
-# not stored under the AIND <label>_YYYY-MM-DD_HH-MM-SS convention); align the saved asset's
-# name with this, or set this to whatever name the asset is saved under.
-ASSET_NAME = "LC_percentile_meshes"
+# match the asset it describes, and it is also the results/<ASSET_NAME>/ subfolder that holds
+# the meshes + this metadata (saved as one standalone asset). Shared with reproduce_meshes.py
+# and the notebook via the ASSET_NAME env var set in code/run; default below for standalone runs.
+ASSET_NAME = os.environ.get("ASSET_NAME", "LC_percentile_meshes")
 
 # The single upstream input: the CCF-registered nuclear point calls. Referenced by name
 # (internal CO asset, no public URL).
@@ -67,19 +67,18 @@ DATA_SUMMARY = (
 )
 
 
-def results_dir() -> Path:
-    """Where the meshes were written, so the metadata sits beside them in the same asset.
+def asset_dir() -> Path:
+    """The asset subfolder results/<ASSET_NAME>/, where reproduce_meshes.py wrote the meshes;
+    the metadata is written here too so the whole subfolder is one standalone data asset.
 
-    Mirrors reproduce_meshes.py: /root/capsule/results on Code Ocean, else the local
-    results/reproduced directory.
+    Mirrors reproduce_meshes.py: results root is /root/capsule/results on Code Ocean, else
+    the local results/ directory.
     """
-    cap = Path("/root/capsule/results")
-    if Path("/root/capsule/data").exists():
-        cap.mkdir(parents=True, exist_ok=True)
-        return cap
-    local = Path(__file__).resolve().parent.parent / "results" / "reproduced"
-    local.mkdir(parents=True, exist_ok=True)
-    return local
+    root = (Path("/root/capsule/results") if Path("/root/capsule/data").exists()
+            else Path(__file__).resolve().parent.parent / "results")
+    out = root / ASSET_NAME
+    out.mkdir(parents=True, exist_ok=True)
+    return out
 
 
 def fetch_co_provenance() -> tuple[str, str]:
@@ -175,7 +174,7 @@ def write_processing(out: Path, run_time: datetime) -> None:
 
 
 def main() -> None:
-    out = results_dir()
+    out = asset_dir()
     now = datetime.now(UTC)
     print(f"Writing mesh-asset metadata to {out}")
     write_data_description(out, now)

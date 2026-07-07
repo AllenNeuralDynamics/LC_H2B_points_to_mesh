@@ -17,6 +17,7 @@ Usage (on CodeOcean the raw dataset is mounted and the default resolves automati
 """
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -31,8 +32,14 @@ import lc_mesh  # noqa: E402
 _CAP = Path("/root/capsule/data")
 RAW_DIR = (_CAP / "LC_H2B_trailmap_probabilities_and_point_calls"
            / "segmentation_and_quantification")
-_OUT = (Path("/root/capsule/results") if _CAP.exists()
-        else REPO / "results" / "reproduced")
+
+# The meshes + their metadata form one data asset, written to results/<ASSET_NAME>/ so that
+# subfolder can be saved as a standalone Code Ocean data asset (figures go to results/figures/
+# separately). ASSET_NAME is shared with write_metadata.py and the notebook via the env var
+# set in code/run; the metadata's `name` must match this subfolder name.
+ASSET_NAME = os.environ.get("ASSET_NAME", "LC_percentile_meshes")
+_RESULTS_ROOT = Path("/root/capsule/results") if _CAP.exists() else REPO / "results"
+_OUT = _RESULTS_ROOT / ASSET_NAME
 
 
 def _build_and_save(name, mesh, out, report):

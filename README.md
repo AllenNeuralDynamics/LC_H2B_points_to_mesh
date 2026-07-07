@@ -15,7 +15,16 @@ All ten meshes are generated end to end from the raw point calls, with no manual
 3. maps local kNN density, then
 4. for the core mesh and each percentile threshold, selects the shell/interior populations, reconstructs the surface, and repairs it into a watertight solid.
 
-Every parameter (point ordering, density k, per-mesh shell/interior thresholds, surfel radius, watertight resolution, smoothing, and per-mesh repair settings) is documented in [`code/lc_mesh/config.py`](code/lc_mesh/config.py). Outputs are written to `results/`: `new_core_mesh.obj`, `percentile_{10..90}.obj`, and `reproduction_report.json` (each mesh's vertex/face counts, volume, watertightness, and Euler number).
+Every parameter (point ordering, density k, per-mesh shell/interior thresholds, surfel radius, watertight resolution, smoothing, and per-mesh repair settings) is documented in [`code/lc_mesh/config.py`](code/lc_mesh/config.py). See [Outputs](#outputs) for what the run produces and how it is laid out.
+
+## Outputs
+
+The Reproducible Run writes two things under `results/`:
+
+- **`results/LC_percentile_meshes/`** is the mesh **data asset**: `new_core_mesh.obj`, `percentile_{10..90}.obj`, `reproduction_report.json` (per-mesh vertex/face counts, volume, watertightness, Euler number), and the AIND metadata `data_description.json` + `processing.json`. This subfolder is self-contained, so it can be saved directly as a standalone Code Ocean data asset. The folder name is `ASSET_NAME` (default `LC_percentile_meshes`, set in `code/run`) and is shared by the mesh, metadata, and figure steps so they agree.
+- **`results/figures/`** holds the paper figures (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal-slice SVGs) plus the executed notebook. These are run outputs, not part of the mesh asset.
+
+The metadata is written by [`code/write_metadata.py`](code/write_metadata.py). `processing.json`'s `Code` block (capsule web URL + release version) is introspected from the Code Ocean REST API at run time, which requires the **"Code Ocean API Credentials"** secret to be attached (Capsule Settings -> Credentials). Without it, `processing.json` is skipped with a warning and only `data_description.json` is written.
 
 ## Input data
 
@@ -48,13 +57,15 @@ No previously generated LC mesh is attached; the meshes are produced from the po
 
 ## Figures
 
-[`code/explore_mesh.ipynb`](code/explore_mesh.ipynb) is a thin notebook that reproduces the paper figures **from the meshes this capsule generates**, and provides interactive controls to explore the mesh-generation parameters. Run `code/reproduce_meshes.py` first so the meshes exist in `results/`, then run the notebook; all real logic lives in `lc_mesh.figures`.
+[`code/explore_mesh.ipynb`](code/explore_mesh.ipynb) is a thin notebook that reproduces the paper figures **from the meshes this capsule generates**, and provides interactive controls to explore the mesh-generation parameters. Run `code/reproduce_meshes.py` first so the meshes exist in `results/<asset>/`, then run the notebook; it writes figures to `results/figures/` and all real logic lives in `lc_mesh.figures`.
 
 ## Environment
 
-The environment is pinned as a lockfile: [`environment/requirements.in`](environment/requirements.in) lists the top-level (directly imported) packages, and [`environment/requirements.txt`](environment/requirements.txt) is the fully-resolved, version-pinned set compiled from it (`uv pip compile ... --exclude-newer 2026-02-03`). [`environment/Dockerfile`](environment/Dockerfile) copies the lock into the image and [`environment/postInstall`](environment/postInstall) installs from it (Python 3.10). To change a dependency, edit `requirements.in` and recompile `requirements.txt`.
+The mesh-generation environment is pinned as a lockfile: [`environment/requirements.in`](environment/requirements.in) lists the top-level (directly imported) packages, and [`environment/requirements.txt`](environment/requirements.txt) is the fully-resolved, version-pinned set compiled from it (`uv pip compile ... --python-platform linux`). Every package is pinned to an exact version, and those pins (not any dependency-resolution date bound) are what make the meshes reproducible: the generated meshes are identical to well below a nanometer regardless of which transitive versions resolve. [`environment/Dockerfile`](environment/Dockerfile) copies the lock into the image and [`environment/postInstall`](environment/postInstall) installs from it (Python 3.10). To change a dependency, edit `requirements.in` and recompile `requirements.txt`.
 
 Core packages: `numpy`, `scipy`, `pandas`, `scikit-learn` (kNN/PCA), `trimesh` (mesh ops, repair, voxelization), `open3d` (smoothing), `point_cloud_utils` (surface reconstruction, watertight conversion), `matplotlib`/`plotly`/`ipywidgets` (figures + notebook), `zarr`/`tifffile` (raw-image overlay).
+
+Metadata generation uses a **separate** environment: `aind-data-schema` is a current release and must not be pinned into the reproducibility-frozen geometry env, so `postInstall` provisions it into `/opt/meta-env` from [`environment/metadata-requirements.txt`](environment/metadata-requirements.txt), and `code/write_metadata.py` runs there.
 
 ## License
 
