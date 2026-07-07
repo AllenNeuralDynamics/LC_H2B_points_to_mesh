@@ -10,8 +10,11 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libcublas-12-1=12.1.3.1-1 \
         libgl1=1.4.0-1 \
+        libgomp1=12.3.0-1ubuntu1~22.04.3 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY postInstall /
+COPY requirements.txt /requirements.txt
+COPY metadata-requirements.txt /metadata-requirements.txt
 RUN --mount=type=secret,id=secrets . /run/secrets/secrets \
     && /postInstall

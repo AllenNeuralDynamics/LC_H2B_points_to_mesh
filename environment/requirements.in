@@ -1,0 +1,26 @@
+# Top-level (direct) dependencies of the LC mesh capsule, pinned to exact versions. These
+# pins (not any date bound) determine the mesh: the generated meshes are identical to well
+# below a nanometer regardless of which transitive-dependency versions resolve. Compile the
+# fully-pinned lock (requirements.txt) from this with:
+#   uv pip compile environment/requirements.in --python-version 3.10 \
+#       --python-platform linux -o environment/requirements.txt
+# mesh generation
+numpy==1.26.4
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+trimesh==4.11.1
+networkx==3.4.2          # trimesh.repair (fix_winding/fill_holes/fix_normals) needs it
+rtree==1.4.1             # trimesh spatial index / point-in-mesh containment
+open3d==0.18.0
+point-cloud-utils==0.34.0
+tqdm==4.67.3
+# figures + notebook (nbconvert/ipykernel execute the notebook headlessly in code/run)
+matplotlib==3.10.8
+plotly==6.5.2
+ipywidgets==8.1.8
+nbconvert==7.17.0
+ipykernel==7.1.0
+# raw-image max-projection overlay figure
+zarr==2.18.3
+tifffile==2025.5.10

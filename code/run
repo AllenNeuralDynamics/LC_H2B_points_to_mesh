@@ -1,14 +1,33 @@
-# #!/usr/bin/env bash
-# set -ex
-# echo "=== worker SCRIPT CALLED ==="
-# # This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
-# jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 mesh_and_figure_generation.ipynb
-
 #!/usr/bin/env bash
 set -euxo pipefail
-# This is the master script for the capsule. When you click "Reproducible Run", the code in this file will execute.
-jupyter nbconvert \
-    --to 'html' \
-    --ExecutePreprocessor.timeout=-1 \
-    --FilesWriter.build_directory=../results \
-    --execute mesh_and_figure_generation.ipynb
+# Master script for the capsule's "Reproducible Run".
+#
+# The meshes + their metadata form one data asset, written to results/$ASSET_NAME/ so that
+# subfolder can be saved as a standalone Code Ocean data asset; figures go to results/figures/.
+# All three steps below read $ASSET_NAME so they agree on the subfolder and metadata name.
+export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes}"
+
+# 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point calls
+#    into results/$ASSET_NAME/ (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).
+# 2. Write the mesh asset's AIND metadata (data_description.json + processing.json) into the
+#    same results/$ASSET_NAME/, using the separate /opt/meta-env (aind-data-schema).
+#    processing.json's capsule URL + release version are introspected from the Code Ocean API
+#    (needs the "Code Ocean API Credentials" secret; without it, processing.json is skipped).
+# 3. Execute the figures notebook headlessly; it writes the paper figures to results/figures/
+#    (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal slices, raw-image overlay).
+
+python -u reproduce_meshes.py
+
+/opt/meta-env/bin/python write_metadata.py
+
+mkdir -p /root/capsule/results/figures
+python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true
+# The nbconvert-spawned Jupyter kernel is a subprocess that does not inherit the shell's
+# library search path, so open3d's native lib fails to find libgomp.so.1 in the kernel
+# even though it loads fine for the step above. Export the paths that hold it (the apt
+# multiarch dir and conda's lib) so the kernel process can dlopen it too.
+export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/opt/conda/lib:${LD_LIBRARY_PATH:-}"
+# Strict execution (no --allow-errors): every figure is an expected output, so if any
+# figure cell fails the run fails, rather than silently producing an incomplete result.
+jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=2400 \
+    --output /root/capsule/results/figures/explore_mesh_executed.ipynb explore_mesh.ipynb
