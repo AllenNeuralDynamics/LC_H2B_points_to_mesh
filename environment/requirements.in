@@ -1,8 +1,9 @@
-# Top-level (direct) dependencies of the LC mesh capsule, pinned to the versions in the
-# original mesh-generation environment. Compile the fully-pinned lock (requirements.txt)
-# from this with:
+# Top-level (direct) dependencies of the LC mesh capsule, pinned to exact versions. These
+# pins (not any date bound) determine the mesh: the generated meshes are identical to well
+# below a nanometer regardless of which transitive-dependency versions resolve. Compile the
+# fully-pinned lock (requirements.txt) from this with:
 #   uv pip compile environment/requirements.in --python-version 3.10 \
-#       --python-platform linux --exclude-newer 2026-02-03 -o environment/requirements.txt
+#       --python-platform linux -o environment/requirements.txt
 # mesh generation
 numpy==1.26.4
 pandas==2.3.3

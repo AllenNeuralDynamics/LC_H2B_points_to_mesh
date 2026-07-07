@@ -51,8 +51,14 @@ curl -LsSf https://astral.sh/uv/install.sh | \
     UV_INSTALL_DIR=/usr/local/bin sh
 
 # --- Pinned Python environment. The fully-resolved, version-pinned dependency set lives
-# in the committed environment/requirements.txt (compiled from environment/requirements.in
-# with `uv pip compile ... --exclude-newer 2026-02-03`), which the Dockerfile COPYs to
-# /requirements.txt. Installing from that lock is what makes the environment reproducible;
-# --exclude-newer bounds resolution to the original mesh-generation date as a safety net.
-uv pip install --no-cache --system --exclude-newer 2026-02-03 -r /requirements.txt
+# in the committed environment/requirements.txt (compiled from environment/requirements.in),
+# which the Dockerfile COPYs to /requirements.txt. Every package is pinned to an exact
+# version, so installing from this lock is what makes the environment reproducible.
+uv pip install --no-cache --system -r /requirements.txt
+
+# --- Separate metadata environment. aind-data-schema (a current release) is used only by
+# code/write_metadata.py to emit the mesh asset's data_description.json + processing.json.
+# It is kept in its own Python 3.11 env so it cannot affect the pinned geometry env above or
+# mesh reproducibility.
+uv venv --python 3.11 /opt/meta-env
+uv pip install --python /opt/meta-env/bin/python -r /metadata-requirements.txt

@@ -15,5 +15,6 @@ RUN apt-get update \
 
 COPY postInstall /
 COPY requirements.txt /requirements.txt
+COPY metadata-requirements.txt /metadata-requirements.txt
 RUN --mount=type=secret,id=secrets . /run/secrets/secrets \
     && /postInstall

@@ -4,11 +4,17 @@ set -euxo pipefail
 #
 # 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point
 #    calls (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).
-# 2. Execute the figures notebook headlessly so it generates the paper figures from those
+# 2. Write the mesh asset's AIND metadata (data_description.json + processing.json), using
+#    the separate /opt/meta-env (aind-data-schema). processing.json's capsule URL + release
+#    version are introspected from the Code Ocean API (needs the "Code Ocean API Credentials"
+#    secret; without it, processing.json is skipped with a warning).
+# 3. Execute the figures notebook headlessly so it generates the paper figures from those
 #    meshes and saves them to ../results (kNN heatmaps, 3D mesh HTMLs, per-sample counts,
 #    coronal slices, raw-image overlay).
 
 python -u reproduce_meshes.py
+
+/opt/meta-env/bin/python write_metadata.py
 
 python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true
 # The nbconvert-spawned Jupyter kernel is a subprocess that does not inherit the shell's
