@@ -11,6 +11,11 @@ set -euxo pipefail
 python -u reproduce_meshes.py
 
 python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true
+# The nbconvert-spawned Jupyter kernel is a subprocess that does not inherit the shell's
+# library search path, so open3d's native lib fails to find libgomp.so.1 in the kernel
+# even though it loads fine for the step above. Export the paths that hold it (the apt
+# multiarch dir and conda's lib) so the kernel process can dlopen it too.
+export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/opt/conda/lib:${LD_LIBRARY_PATH:-}"
 # Strict execution (no --allow-errors): every figure is an expected output, so if any
 # figure cell fails the run fails, rather than silently producing an incomplete result.
 jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=2400 \
