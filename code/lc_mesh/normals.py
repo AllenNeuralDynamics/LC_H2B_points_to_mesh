@@ -4,9 +4,6 @@ Faithful extraction of notebook cell 16. The mesh pipeline always supplies
 interior points, so `orient_complex_shape_normals` uses the interior-guided path
 (`orient_normals_with_interior`); the patch/MST fallback is preserved for parity
 but is not exercised by the mesh pipeline.
-
-NOTE (preserved from the original): `estimate_normals` ignores its `k` argument
-and always uses 40 neighbours. Kept as-is to preserve the original recipe.
 """
 import numpy as np
 from scipy.sparse import csr_matrix
@@ -22,9 +19,8 @@ except ImportError:  # pragma: no cover
 
 
 def estimate_normals(shell_points, k=40):
-    """Per-point normal via PCA (SVD) of the local 40-neighbour neighbourhood."""
-    k_normals = 40  # NB: the original hard-codes 40 regardless of `k`
-    nbrs = NearestNeighbors(n_neighbors=k_normals + 1, algorithm='kd_tree').fit(shell_points)
+    """Per-point normal via PCA (SVD) of the local `k`-neighbour neighbourhood."""
+    nbrs = NearestNeighbors(n_neighbors=k + 1, algorithm='kd_tree').fit(shell_points)
     normals = np.zeros((len(shell_points), 3))
     for i in tqdm(range(len(shell_points))):
         _, indices = nbrs.kneighbors([shell_points[i]])

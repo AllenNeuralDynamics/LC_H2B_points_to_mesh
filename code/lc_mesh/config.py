@@ -29,7 +29,7 @@ CORE = dict(
     shell_lo=10,           # shell = 10 < kNN_percentile < 67
     shell_hi=67,           # the interactive slider value, left at its default
     interior_hi=10,        # interior (normal-orientation guide) = kNN_percentile < 10
-    normals_k=80,          # passed to estimate_normals (note: see normals.py)
+    normals_k=40,          # neighbours used by estimate_normals (PCA normal estimation)
     surfel_radius=30,
     watertight_resolution=10000,
     smooth_iterations=5,
@@ -37,7 +37,7 @@ CORE = dict(
 
 # --- Core mesh repair (cells 25, 27, 29, 31) ---
 REPAIR = dict(
-    pitch=3,               # voxel pitch, cell 25
+    pitch=2,               # voxel pitch, cell 25
     max_distance=5,        # surface distance-transform horizon (voxels), cell 25
     keep_distance=2,       # drop vertices with distance-to-surface > 2, cell 27
     shrink=None,           # optional shrink_mesh_along_normals distance (cell 32); off for core
