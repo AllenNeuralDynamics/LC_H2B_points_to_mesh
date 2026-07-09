@@ -5,7 +5,9 @@ set -euxo pipefail
 # The meshes + their metadata form one data asset, written to results/$ASSET_NAME/ so that
 # subfolder can be saved as a standalone Code Ocean data asset; figures go to results/figures/.
 # All three steps below read $ASSET_NAME so they agree on the subfolder and metadata name.
-export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes}"
+# The default name is stamped with the UTC run date/time (AIND convention), so each run produces
+# a distinct, dated asset with no manual editing. Override by setting ASSET_NAME before the run.
+export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes_$(date -u +%Y-%m-%d_%H-%M-%S)}"
 
 # 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point calls
 #    into results/$ASSET_NAME/ (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).

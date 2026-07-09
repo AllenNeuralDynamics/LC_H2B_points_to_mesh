@@ -1,0 +1,97 @@
+{
+  "project_name": "Discovery Neuromodulation - Subproject 2 Molecular Anatomy Cell Types",
+  "funding_source": [
+    {
+      "object_type": "Funding",
+      "funder": {
+        "name": "Allen Institute",
+        "abbreviation": "AI",
+        "registry": "Research Organization Registry (ROR)",
+        "registry_identifier": "03cpe7c52"
+      },
+      "grant_number": null,
+      "fundee": [
+        {
+          "object_type": "Person",
+          "name": "Alex Piet",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Jeremiah Cohen",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Kanghoon Jung",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Polina Kosillo",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Sue Su",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        }
+      ]
+    },
+    {
+      "object_type": "Funding",
+      "funder": {
+        "name": "National Institute of Mental Health",
+        "abbreviation": "NIMH",
+        "registry": "Research Organization Registry (ROR)",
+        "registry_identifier": "04xeg9z08"
+      },
+      "grant_number": "1R01MH134833",
+      "fundee": [
+        {
+          "object_type": "Person",
+          "name": "Jeremiah Cohen",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Jonathan Ting",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Kenta Hagihara",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Polina Kosillo",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        },
+        {
+          "object_type": "Person",
+          "name": "Yoav Ben-Simon",
+          "registry": "Open Researcher and Contributor ID (ORCID)",
+          "registry_identifier": null
+        }
+      ]
+    }
+  ],
+  "investigators": [
+    {
+      "object_type": "Person",
+      "name": "Polina Kosillo",
+      "registry": "Open Researcher and Contributor ID (ORCID)",
+      "registry_identifier": null
+    }
+  ]
+}
