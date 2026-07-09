@@ -22,7 +22,7 @@ Every parameter (point ordering, density k, per-mesh shell/interior thresholds, 
 The Reproducible Run writes two things under `results/`:
 
 - **`results/LC_percentile_meshes/`** is the mesh **data asset**: `new_core_mesh.obj`, `percentile_{10..90}.obj`, `reproduction_report.json` (per-mesh vertex/face counts, volume, watertightness, Euler number), and the AIND metadata `data_description.json` + `processing.json`. This subfolder is self-contained, so it can be saved directly as a standalone Code Ocean data asset. The folder name is `ASSET_NAME` (default `LC_percentile_meshes`, set in `code/run`) and is shared by the mesh, metadata, and figure steps so they agree.
-- **`results/figures/`** holds the paper figures (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal-slice SVGs) plus the executed notebook. These are run outputs, not part of the mesh asset.
+- **`results/figures/`** holds the paper figures (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal-slice SVGs) plus the executed notebook. These are run outputs, not part of the mesh asset. Included is a csv with every coordinate of every cell, each tagged with kNN density value, kNN percentile, and flags for inclusion in each percentile mesh as well as the core mesh. Interactive 3D visualizations are saved as html files. Figures in the manuscript are extracted from these visualizations.
 
 The metadata is written by [`code/write_metadata.py`](code/write_metadata.py). `processing.json`'s `Code` block (capsule web URL + release version) is introspected from the Code Ocean REST API at run time, which requires the **"Code Ocean API Credentials"** secret to be attached (Capsule Settings -> Credentials). Without it, `processing.json` is skipped with a warning and only `data_description.json` is written.
 
@@ -41,7 +41,7 @@ No previously generated LC mesh is attached; the meshes are produced from the po
 1. **Point loading & preprocessing**: load CCF-registered `.npy` point clouds, apply the coordinate transform (scale to µm, axis flips), reflect across the midline (x = 5700 µm) to pool both hemispheres, and crop to the LC bounding box.
 2. **Local density mapping**: mean distance to the k = 100 nearest neighbours per cell, converted to percentile ranks.
 3. **Mesh generation** (per mesh): select shell points (between a low and a high kNN percentile) and interior points (below a low percentile, used to orient normals); estimate normals via local PCA; reconstruct the surface with `point_cloud_utils.pointcloud_surfel_geometry`; convert to watertight with `pcu.make_mesh_watertight`; Laplacian-smooth (Open3D).
-4. **Mesh repair**: voxelize + distance-transform to detect near-surface caverns, drop far vertices, seal holes by centroid fan-triangulation, clean broken/solitary faces, and verify watertightness. The core mesh and each percentile mesh use their own repair settings from `config.py`.
+4. **Mesh repair**: voxelize + distance-transform to detect near-surface caverns, drop deep internal vertices, seal holes by centroid fan-triangulation, clean broken/solitary faces, and verify watertightness. The core mesh and each percentile mesh use their own repair settings (due largely to density differences at the varying percentile cutoffs) from `config.py`.
 
 ## Library layout (`code/lc_mesh/`)
 
