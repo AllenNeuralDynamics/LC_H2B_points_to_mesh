@@ -125,6 +125,8 @@ CODEOCEAN_TESTING.md
 image*.png
 feb_*_output.txt
 /untitled
+/code/mesh_and_figure_generation.ipynb
+/code/scratch.ipynb
 
 # Spyder project settings
 .spyderproject
