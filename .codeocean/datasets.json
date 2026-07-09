@@ -2,16 +2,20 @@
 	"version": 1,
 	"attached_datasets": [
 		{
-			"id": "779da73f-9d6d-46b2-94bb-1a7dbfaddd66",
-			"mount": "LC_H2B_trailmap_probabilities_and_point_calls"
+			"id": "5e4c25dc-1c48-482f-8d86-052ac6dbafc5",
+			"mount": "SmartSPIM_807324_2025-08-25_11-34-40_stitched_2025-10-23_17-35-23"
 		},
 		{
 			"id": "673fe731-3a2b-42eb-b8f7-bde82d79e371",
 			"mount": "ccf_meshes"
 		},
 		{
-			"id": "5e4c25dc-1c48-482f-8d86-052ac6dbafc5",
-			"mount": "SmartSPIM_807324_2025-08-25_11-34-40_stitched_2025-10-23_17-35-23"
+			"id": "779da73f-9d6d-46b2-94bb-1a7dbfaddd66",
+			"mount": "LC_H2B_trailmap_probabilities_and_point_calls"
+		},
+		{
+			"id": "c712751d-f744-4fe8-9657-93a7084eab22",
+			"mount": "LC_percentile_meshes"
 		}
 	]
 }
