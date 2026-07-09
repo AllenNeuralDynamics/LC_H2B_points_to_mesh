@@ -49,15 +49,15 @@ REPAIR = dict(
 # settings. `repair=None` means no extra repair pass is applied (the watertight surfel
 # mesh is used as-is). Each mesh is generated deterministically from these values.
 PERCENTILE_PARAMS = {
-    10: dict(shell_lo=4, shell_hi=10, interior_hi=4, normals_k=80, surfel_radius=30.0, watertight_resolution=10000, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 3, 'shrink': None, 'extra_seal_passes': 1}),
-    20: dict(shell_lo=4, shell_hi=20, interior_hi=4, normals_k=80, surfel_radius=32.5, watertight_resolution=7500, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 3, 'shrink': None, 'extra_seal_passes': 1}),
-    30: dict(shell_lo=4, shell_hi=30, interior_hi=4, normals_k=80, surfel_radius=35.0, watertight_resolution=10000, smooth_iterations=5, repair=None),
-    40: dict(shell_lo=4, shell_hi=40, interior_hi=4, normals_k=80, surfel_radius=37.5, watertight_resolution=12500, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
-    50: dict(shell_lo=4, shell_hi=50, interior_hi=4, normals_k=80, surfel_radius=40.0, watertight_resolution=15000, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
-    60: dict(shell_lo=4, shell_hi=60, interior_hi=4, normals_k=80, surfel_radius=42.5, watertight_resolution=17500, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 4, 'shrink': None, 'extra_seal_passes': 0}),
-    70: dict(shell_lo=4, shell_hi=70, interior_hi=4, normals_k=80, surfel_radius=51.75, watertight_resolution=40000, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
-    80: dict(shell_lo=4, shell_hi=80, interior_hi=4, normals_k=80, surfel_radius=47.5, watertight_resolution=22500, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 3, 'shrink': None, 'extra_seal_passes': 1}),
-    90: dict(shell_lo=4, shell_hi=90, interior_hi=4, normals_k=80, surfel_radius=50.0, watertight_resolution=50000, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 4, 'shrink': None, 'extra_seal_passes': 0}),
+    10: dict(shell_lo=4, shell_hi=10, interior_hi=4, normals_k=40, surfel_radius=30.0, watertight_resolution=10000, smooth_iterations=5, repair={'pitch': 4, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
+    20: dict(shell_lo=4, shell_hi=20, interior_hi=4, normals_k=40, surfel_radius=32.5, watertight_resolution=15000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 0}),
+    30: dict(shell_lo=4, shell_hi=30, interior_hi=4, normals_k=40, surfel_radius=35.0, watertight_resolution=20000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
+    40: dict(shell_lo=4, shell_hi=40, interior_hi=4, normals_k=40, surfel_radius=37.5, watertight_resolution=25000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
+    50: dict(shell_lo=4, shell_hi=50, interior_hi=4, normals_k=40, surfel_radius=40.0, watertight_resolution=30000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 0}),
+    60: dict(shell_lo=4, shell_hi=60, interior_hi=4, normals_k=40, surfel_radius=42.5, watertight_resolution=35000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 0}),
+    70: dict(shell_lo=4, shell_hi=70, interior_hi=4, normals_k=40, surfel_radius=45.0, watertight_resolution=40000, smooth_iterations=5, repair={'pitch': 3, 'max_distance': 5, 'keep_distance': 2, 'shrink': -2, 'extra_seal_passes': 1}),
+    80: dict(shell_lo=4, shell_hi=80, interior_hi=4, normals_k=40, surfel_radius=47.5, watertight_resolution=45000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
+    90: dict(shell_lo=4, shell_hi=90, interior_hi=4, normals_k=40, surfel_radius=50.0, watertight_resolution=50000, smooth_iterations=5, repair={'pitch': 5, 'max_distance': 5, 'keep_distance': 2, 'shrink': -2, 'extra_seal_passes': 1}),
 }
 
 PERCENTILE_THRESHOLDS = sorted(PERCENTILE_PARAMS)
