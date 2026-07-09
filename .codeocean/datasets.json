@@ -16,6 +16,10 @@
 		{
 			"id": "c712751d-f744-4fe8-9657-93a7084eab22",
 			"mount": "LC_percentile_meshes"
+		},
+		{
+			"id": "fdd6dcbf-0917-4349-ae18-20f687b0089c",
+			"mount": ".brainglobe"
 		}
 	]
 }

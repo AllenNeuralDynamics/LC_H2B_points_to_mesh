@@ -31,7 +31,7 @@ The metadata is written by [`code/write_metadata.py`](code/write_metadata.py). `
 The capsule attaches three datasets (see [`.codeocean/datasets.json`](.codeocean/datasets.json)):
 
 - **`LC_H2B_trailmap_probabilities_and_point_calls`**: per-mouse CCF-registered nuclear point calls for all 8 SmartSPIM samples (IDs `798571`, `798573`, `798576`, `807322`, `807324`, `807325`, `807326`, `807327`). The meshes are built entirely from these.
-- **`ccf_meshes`**: Allen CCF brain-structure reference mesh, used only as the brain-outline backdrop in the 3D figures.
+- **`brainglobe`**: Allen CCF brain-structure reference mesh, used only as the brain-outline backdrop in the 3D figures.
 - **`SmartSPIM_807324_...`**: one raw stitched light-sheet volume, used only for the raw-image max-projection overlay figure.
 
 No previously generated LC mesh is attached; the meshes are produced from the point calls.
