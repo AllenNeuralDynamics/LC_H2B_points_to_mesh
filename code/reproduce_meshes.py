@@ -7,11 +7,9 @@ kNN density -> then, for the core mesh and each of the nine percentile threshold
 (10..90), select the shell/interior populations, reconstruct the surface, and repair it
 into a watertight solid. Every parameter lives in `lc_mesh.config`.
 
-It writes ten `.obj` files (`new_core_mesh.obj` and `percentile_{10..90}.obj`),
-`LC_points.csv` (the LC points annotated with per-mesh membership: `in_new_core_mesh` and
-`in_<percentile>`), and a `reproduction_report.json` recording each mesh's own statistics
-(vertex/face counts, volume, watertightness, Euler number). All land in the asset subfolder
-results/<ASSET_NAME>/.
+It writes ten `.obj` files (`new_core_mesh.obj` and `percentile_{10..90}.obj`) and a
+`reproduction_report.json` recording each mesh's own statistics (vertex/face counts,
+volume, watertightness, Euler number).
 
 Usage (on CodeOcean the raw dataset is mounted and the default resolves automatically):
     python code/reproduce_meshes.py
@@ -84,27 +82,17 @@ def main():
     _build_and_save("new_core_mesh", core, out, report)
 
     # 3. the nine percentile meshes
-    percentile_meshes = {}
     for thresh in lc_mesh.config.PERCENTILE_THRESHOLDS:
         print(f"Generating percentile mesh {thresh} ...")
         mesh, _ = lc_mesh.make_percentile_mesh(df, thresh, verbose=True)
-        percentile_meshes[thresh] = mesh
         _build_and_save(f"percentile_{thresh}", mesh, out, report)
-
-    # 4. annotate each LC point with its mesh membership and save the point table into the asset,
-    #    matching the previous asset's LC_points.csv (base point columns + in_new_core_mesh and
-    #    in_<percentile>). This is the same membership call the figures notebook uses.
-    print("Annotating LC points with mesh membership ...")
-    df = lc_mesh.count_points_in_meshes(df, {"new_core_mesh": core, **percentile_meshes}, verbose=True)
-    df.to_csv(out / "LC_points.csv", index=False)
-    n_membership = sum(c.startswith("in_") for c in df.columns)
-    print(f"  wrote LC_points.csv: {len(df)} points, {n_membership} membership columns")
 
     report["total_seconds"] = round(time.time() - t0, 1)
     report_path = out / "reproduction_report.json"
     report_path.write_text(json.dumps(report, indent=2))
     n = len(report["meshes"])
-    print(f"\nGenerated {n} meshes + LC_points.csv in {report['total_seconds']}s -> {out}")
+    print(f"\nGenerated {n} meshes in {report['total_seconds']}s. "
+          f"Wrote meshes + report -> {out}")
 
 
 if __name__ == "__main__":
