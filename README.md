@@ -2,9 +2,11 @@
 
 This capsule reproducibly generates the locus coeruleus (LC) density meshes shown in figures 1 and S1 of the paper: one core mesh plus nine percentile meshes (10th through 90th), built directly from the raw cell point calls.
 
-**GitHub:** https://github.com/AllenNeuralDynamics/LC_H2B_points_to_mesh
-**Code Ocean:** https://codeocean.allenneuraldynamics.org/capsule/8736312/tree
-**Full collection:** https://codeocean.allenneuraldynamics.org/collections/9cf044ce-93c7-4c7e-bfa1-5d8c37aa42ec
+**GitHub:** https://github.com/AllenNeuralDynamics/LC_H2B_points_to_mesh 
+
+**Code Ocean:** https://codeocean.allenneuraldynamics.org/capsule/8736312/tree 
+
+**Full collection:** https://codeocean.allenneuraldynamics.org/collections/9cf044ce-93c7-4c7e-bfa1-5d8c37aa42ec 
 
 ## Reproducibility
 

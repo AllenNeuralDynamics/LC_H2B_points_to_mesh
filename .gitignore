@@ -116,18 +116,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# Local investigation artifacts (not for publication)
-REPRODUCIBILITY_ANALYSIS.md
-CODEOCEAN_TESTING.md
-/tools/
-/results-c712751d-f744-4fe8-9657-93a7084eab22/
-/results-c712751d-f744-4fe8-9657-93a7084eab22.zip
-image*.png
-feb_*_output.txt
-/untitled
-/code/mesh_and_figure_generation.ipynb
-/code/scratch.ipynb
-
 # Spyder project settings
 .spyderproject
 .spyproject
