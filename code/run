@@ -9,23 +9,22 @@ set -euxo pipefail
 # a distinct, dated asset with no manual editing. Override by setting ASSET_NAME before the run.
 export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes_$(date -u +%Y-%m-%d_%H-%M-%S)}"
 
-# 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point calls
+# 1. Write the mesh asset's AIND metadata (data_description.json + processing.json) into
+#    results/$ASSET_NAME/, using the separate /opt/meta-env (aind-data-schema). This runs FIRST,
+#    before the ~12-min mesh step, so any metadata/credentials problem surfaces in seconds
+#    instead of after the meshes are built. The metadata does not read the meshes, so there is no
+#    ordering dependency. processing.json's capsule URL + release version are introspected from
+#    the Code Ocean API (needs the "Code Ocean API Credentials" secret; without it, or if the API
+#    rejects the token, processing.json is skipped with a warning and data_description.json is
+#    still written).
+# 2. Generate the LC core mesh and the nine percentile meshes from the raw cell point calls
 #    into results/$ASSET_NAME/ (core_mesh.obj, percentile_{10..90}.obj, mesh_summary.json).
-# 2. Write the mesh asset's AIND metadata (data_description.json + processing.json) into the
-#    same results/$ASSET_NAME/, using the separate /opt/meta-env (aind-data-schema).
-#    processing.json's capsule URL + release version are introspected from the Code Ocean API
-#    (needs the "Code Ocean API Credentials" secret; without it, processing.json is skipped).
 # 3. Execute the figures notebook headlessly; it writes the paper figures to results/figures/
 #    (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal slices, raw-image overlay).
 
-# Preflight (non-fatal): warn up front if the Code Ocean API credentials needed for
-# processing.json are absent, so a run that needs the full metadata can be cancelled now rather
-# than after the ~12-min mesh step. Runs that only need meshes/figures can ignore the warning.
-/opt/meta-env/bin/python metadata/write_metadata.py --check || true
+/opt/meta-env/bin/python metadata/write_metadata.py
 
 python -u produce_meshes.py
-
-/opt/meta-env/bin/python metadata/write_metadata.py
 
 mkdir -p /root/capsule/results/figures
 python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true

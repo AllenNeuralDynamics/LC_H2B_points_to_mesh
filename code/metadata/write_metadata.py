@@ -132,29 +132,6 @@ def project_metadata() -> dict:
 CO_API_ENV = ("API_KEY", "CO_CAPSULE_ID", "CO_COMPUTATION_ID")
 
 
-def preflight() -> bool:
-    """Report (non-fatally) whether processing.json will be writable, for an early warning at the
-    start of code/run so a metadata-publishing run can be cancelled before the long mesh step.
-
-    processing.json needs the Code Ocean API credentials (CO_API_ENV); a run that only needs the
-    meshes/figures can ignore a missing-credentials warning, and data_description.json is written
-    regardless. Returns True iff all required vars are present.
-    """
-    missing = [v for v in CO_API_ENV if not os.environ.get(v)]
-    if not missing:
-        print("[metadata preflight] Code Ocean API credentials present -> processing.json will be written.")
-        return True
-    print(f"[metadata preflight] WARNING: missing {', '.join(missing)}.")
-    print("[metadata preflight] processing.json will be SKIPPED (data_description.json is still written).")
-    print("[metadata preflight] To write processing.json: attach the 'Code Ocean API Credentials' "
-          "secret (exposing API_KEY) and use a Reproducible Run. Cancel now if you need it.")
-    related = sorted(k for k in os.environ
-                     if k.upper().startswith("CO_") or any(t in k.upper() for t in ("API", "KEY", "TOKEN", "SECRET")))
-    if related:
-        print(f"[metadata preflight] (possibly-relevant env vars visible: {', '.join(related)})")
-    return False
-
-
 def fetch_co_provenance() -> tuple[str, str]:
     """Return (capsule_url, version) for the running Code Ocean capsule via the CO REST API.
 
@@ -270,15 +247,7 @@ def main() -> None:
         help="re-fetch project_funding.json from the metadata service and exit (run from the "
              "AIND network when the project's funding changes)",
     )
-    parser.add_argument(
-        "--check", action="store_true",
-        help="preflight only: report (non-fatally) whether processing.json's Code Ocean "
-             "credentials are present, then exit 0",
-    )
     args = parser.parse_args()
-    if args.check:
-        preflight()
-        return
     if args.refresh_snapshot:
         refresh_snapshot()
         return
