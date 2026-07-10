@@ -57,7 +57,7 @@ curl -LsSf https://astral.sh/uv/install.sh | \
 uv pip install --no-cache --system -r /requirements.txt
 
 # --- Separate metadata environment. aind-data-schema (a current release) is used only by
-# code/write_metadata.py to emit the mesh asset's data_description.json + processing.json.
+# code/metadata/write_metadata.py to emit the mesh asset's data_description.json + processing.json.
 # It is kept in its own Python 3.11 env so it cannot affect the pinned geometry env above or
 # mesh reproducibility.
 uv venv --python 3.11 /opt/meta-env

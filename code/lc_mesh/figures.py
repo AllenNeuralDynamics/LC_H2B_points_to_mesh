@@ -42,7 +42,7 @@ def min_projection_heatmap(coords, values, axis, pixel_size):
     return heatmap, extent, ax0, ax1
 
 
-def plot_knn_min_projection(df, membership_col='in_new_core_mesh', pixel_size=20,
+def plot_knn_min_projection(df, membership_col='in_core_mesh', pixel_size=20,
                             save_path=None):
     """Three orthogonal kNN min-projection heatmaps over the in-core points."""
     core_pts = df[df[membership_col] == 1].copy()
@@ -146,7 +146,7 @@ def plot_all_percentile_meshes(percentile_meshes, brain_mesh=None, save_path=Non
 
 
 def plot_points_core_membership(df, percentile_meshes, core_mesh, brain_mesh=None,
-                                membership_col='in_new_core_mesh', save_path=None):
+                                membership_col='in_core_mesh', save_path=None):
     """Points colored by core-mesh membership + 90th percentile + core."""
     fig = go.Figure()
     out = df[df[membership_col] == 0]

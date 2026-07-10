@@ -7,13 +7,13 @@ kNN density -> then, for the core mesh and each of the nine percentile threshold
 (10..90), select the shell/interior populations, reconstruct the surface, and repair it
 into a watertight solid. Every parameter lives in `lc_mesh.config`.
 
-It writes ten `.obj` files (`new_core_mesh.obj` and `percentile_{10..90}.obj`) and a
-`reproduction_report.json` recording each mesh's own statistics (vertex/face counts,
+It writes ten `.obj` files (`core_mesh.obj` and `percentile_{10..90}.obj`) and a
+`mesh_summary.json` recording each mesh's own statistics (vertex/face counts,
 volume, watertightness, Euler number).
 
 Usage (on CodeOcean the raw dataset is mounted and the default resolves automatically):
-    python code/reproduce_meshes.py
-    python code/reproduce_meshes.py --from-raw DIR --out DIR
+    python code/produce_meshes.py
+    python code/produce_meshes.py --from-raw DIR --out DIR
 """
 import argparse
 import json
@@ -79,7 +79,7 @@ def main():
     # 2. core mesh
     print("Generating core mesh ...")
     core, _ = lc_mesh.make_core_mesh(df, verbose=True)
-    _build_and_save("new_core_mesh", core, out, report)
+    _build_and_save("core_mesh", core, out, report)
 
     # 3. the nine percentile meshes
     for thresh in lc_mesh.config.PERCENTILE_THRESHOLDS:
@@ -88,7 +88,7 @@ def main():
         _build_and_save(f"percentile_{thresh}", mesh, out, report)
 
     report["total_seconds"] = round(time.time() - t0, 1)
-    report_path = out / "reproduction_report.json"
+    report_path = out / "mesh_summary.json"
     report_path.write_text(json.dumps(report, indent=2))
     n = len(report["meshes"])
     print(f"\nGenerated {n} meshes in {report['total_seconds']}s. "

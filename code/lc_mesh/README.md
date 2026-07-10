@@ -18,9 +18,9 @@ are pure (no notebook state).
 
 ## Entry points
 
-- [`../reproduce_meshes.py`](../reproduce_meshes.py) builds the LC points from the raw
+- [`../produce_meshes.py`](../produce_meshes.py) builds the LC points from the raw
   point calls and generates all ten meshes, writing the `.obj` files and a JSON report to
-  `results/`. Run as `python code/reproduce_meshes.py` in the capsule environment.
+  `results/`. Run as `python code/produce_meshes.py` in the capsule environment.
 - [`../explore_mesh.ipynb`](../explore_mesh.ipynb) is a thin notebook that reproduces the
   paper figures from those generated meshes and lets you explore the parameters. It only
   calls `lc_mesh` functions.

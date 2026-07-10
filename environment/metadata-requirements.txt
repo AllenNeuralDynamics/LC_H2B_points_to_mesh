@@ -1,5 +1,5 @@
 # Dependencies for the SEPARATE metadata environment (/opt/meta-env), used only by
-# code/write_metadata.py to emit the mesh asset's data_description.json + processing.json.
+# code/metadata/write_metadata.py to emit the mesh asset's data_description.json + processing.json.
 #
 # aind-data-schema is a current release and is intentionally NOT part of the pinned geometry
 # environment (environment/requirements.txt): it lives in its own env so it cannot affect

@@ -10,7 +10,7 @@ set -euxo pipefail
 export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes_$(date -u +%Y-%m-%d_%H-%M-%S)}"
 
 # 1. Generate the LC core mesh and the nine percentile meshes from the raw cell point calls
-#    into results/$ASSET_NAME/ (new_core_mesh.obj, percentile_{10..90}.obj, reproduction_report.json).
+#    into results/$ASSET_NAME/ (core_mesh.obj, percentile_{10..90}.obj, mesh_summary.json).
 # 2. Write the mesh asset's AIND metadata (data_description.json + processing.json) into the
 #    same results/$ASSET_NAME/, using the separate /opt/meta-env (aind-data-schema).
 #    processing.json's capsule URL + release version are introspected from the Code Ocean API
@@ -18,9 +18,9 @@ export ASSET_NAME="${ASSET_NAME:-LC_percentile_meshes_$(date -u +%Y-%m-%d_%H-%M-
 # 3. Execute the figures notebook headlessly; it writes the paper figures to results/figures/
 #    (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal slices, raw-image overlay).
 
-python -u reproduce_meshes.py
+python -u produce_meshes.py
 
-/opt/meta-env/bin/python write_metadata.py
+/opt/meta-env/bin/python metadata/write_metadata.py
 
 mkdir -p /root/capsule/results/figures
 python -m ipykernel install --sys-prefix --name python3 >/dev/null 2>&1 || true

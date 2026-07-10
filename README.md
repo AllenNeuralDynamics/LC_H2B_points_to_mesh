@@ -10,7 +10,7 @@ This capsule reproducibly generates the locus coeruleus (LC) density meshes show
 
 ## Reproducibility
 
-All ten meshes are generated end to end from the raw point calls, with no manual steps and no reference to any previously generated mesh. The Reproducible Run (`code/run`) executes `code/reproduce_meshes.py`, which:
+All ten meshes are generated end to end from the raw point calls, with no manual steps and no reference to any previously generated mesh. The Reproducible Run (`code/run`) executes `code/produce_meshes.py`, which:
 
 1. loads the CCF-registered point calls for all 8 samples,
 2. reflects them across the midline and crops to the LC,
@@ -23,17 +23,17 @@ Every parameter (point ordering, density k, per-mesh shell/interior thresholds, 
 
 The Reproducible Run writes two things under `results/`:
 
-- **`results/LC_percentile_meshes/`** is the mesh **data asset**: `new_core_mesh.obj`, `percentile_{10..90}.obj`, `reproduction_report.json` (per-mesh vertex/face counts, volume, watertightness, Euler number), and the AIND metadata `data_description.json` + `processing.json`. This subfolder is self-contained, so it can be saved directly as a standalone Code Ocean data asset. The folder name is `ASSET_NAME` (default `LC_percentile_meshes`, set in `code/run`) and is shared by the mesh, metadata, and figure steps so they agree.
+- **`results/LC_percentile_meshes/`** is the mesh **data asset**: `core_mesh.obj`, `percentile_{10..90}.obj`, `mesh_summary.json` (per-mesh vertex/face counts, volume, watertightness, Euler number), and the AIND metadata `data_description.json` + `processing.json`. This subfolder is self-contained, so it can be saved directly as a standalone Code Ocean data asset. The folder name is `ASSET_NAME` (default `LC_percentile_meshes`, set in `code/run`) and is shared by the mesh, metadata, and figure steps so they agree.
 - **`results/figures/`** holds the paper figures (kNN heatmaps, 3D mesh HTMLs, per-sample counts, coronal-slice SVGs) plus the executed notebook. These are run outputs, not part of the mesh asset. Included is a csv with every coordinate of every cell, each tagged with kNN density value, kNN percentile, and flags for inclusion in each percentile mesh as well as the core mesh. Interactive 3D visualizations are saved as html files. Figures in the manuscript are extracted from these visualizations.
 
-The metadata is written by [`code/write_metadata.py`](code/write_metadata.py). `processing.json`'s `Code` block (capsule web URL + release version) is introspected from the Code Ocean REST API at run time, which requires the **"Code Ocean API Credentials"** secret to be attached (Capsule Settings -> Credentials). Without it, `processing.json` is skipped with a warning and only `data_description.json` is written.
+The metadata is written by [`code/metadata/write_metadata.py`](code/metadata/write_metadata.py). `processing.json`'s `Code` block (capsule web URL + release version) is introspected from the Code Ocean REST API at run time, which requires the **"Code Ocean API Credentials"** secret to be attached (Capsule Settings -> Credentials). Without it, `processing.json` is skipped with a warning and only `data_description.json` is written.
 
 ## Input data
 
 The capsule attaches three datasets (see [`.codeocean/datasets.json`](.codeocean/datasets.json)):
 
 - **`LC_H2B_trailmap_probabilities_and_point_calls`**: per-mouse CCF-registered nuclear point calls for all 8 SmartSPIM samples (IDs `798571`, `798573`, `798576`, `807322`, `807324`, `807325`, `807326`, `807327`). The meshes are built entirely from these.
-- **`brainglobe`**: Allen CCF brain-structure reference mesh, used only as the brain-outline backdrop in the 3D figures.
+- **`.brainglobe`**: the public brainglobe `allen_mouse_25um` atlas; its whole-brain root mesh (`meshes/997.obj`) is used only as the brain-outline backdrop in the 3D figures.
 - **`SmartSPIM_807324_...`**: one raw stitched light-sheet volume, used only for the raw-image max-projection overlay figure.
 
 No previously generated LC mesh is attached; the meshes are produced from the point calls.
@@ -59,7 +59,7 @@ No previously generated LC mesh is attached; the meshes are produced from the po
 
 ## Figures
 
-[`code/explore_mesh.ipynb`](code/explore_mesh.ipynb) is a thin notebook that reproduces the paper figures **from the meshes this capsule generates**, and provides interactive controls to explore the mesh-generation parameters. Run `code/reproduce_meshes.py` first so the meshes exist in `results/<asset>/`, then run the notebook; it writes figures to `results/figures/` and all real logic lives in `lc_mesh.figures`.
+[`code/explore_mesh.ipynb`](code/explore_mesh.ipynb) is a thin notebook that reproduces the paper figures **from the meshes this capsule generates**, and provides interactive controls to explore the mesh-generation parameters. Run `code/produce_meshes.py` first so the meshes exist in `results/<asset>/`, then run the notebook; it writes figures to `results/figures/` and all real logic lives in `lc_mesh.figures`.
 
 ## Environment
 
@@ -67,7 +67,7 @@ The mesh-generation environment is pinned as a lockfile: [`environment/requireme
 
 Core packages: `numpy`, `scipy`, `pandas`, `scikit-learn` (kNN/PCA), `trimesh` (mesh ops, repair, voxelization), `open3d` (smoothing), `point_cloud_utils` (surface reconstruction, watertight conversion), `matplotlib`/`plotly`/`ipywidgets` (figures + notebook), `zarr`/`tifffile` (raw-image overlay).
 
-Metadata generation uses a **separate** environment: `aind-data-schema` is a current release and must not be pinned into the reproducibility-frozen geometry env, so `postInstall` provisions it into `/opt/meta-env` from [`environment/metadata-requirements.txt`](environment/metadata-requirements.txt), and `code/write_metadata.py` runs there.
+Metadata generation uses a **separate** environment: `aind-data-schema` is a current release and must not be pinned into the reproducibility-frozen geometry env, so `postInstall` provisions it into `/opt/meta-env` from [`environment/metadata-requirements.txt`](environment/metadata-requirements.txt), and `code/metadata/write_metadata.py` runs there.
 
 ## License
 

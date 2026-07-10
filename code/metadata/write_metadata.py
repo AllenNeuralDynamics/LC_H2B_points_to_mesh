@@ -3,13 +3,13 @@
 Runs in the separate ``/opt/meta-env`` (which has ``aind-data-schema``), not the geometry
 environment that generates the meshes, so aind-data-schema stays a current release rather than
 being pinned into the reproducibility-frozen geometry env. Describes the mesh set this capsule
-produces (new_core_mesh.obj + percentile_10..90.obj) so the saved asset can be published to the
+produces (core_mesh.obj + percentile_10..90.obj) so the saved asset can be published to the
 AIND open-data bucket.
 
 data_description.json's project-owned fields (project_name, funding_source, investigators) are
 read from the committed snapshot ``project_funding.json``. That snapshot is fetched from the AIND
 metadata service (the authoritative, intake-form-owned source) offline with
-``python write_metadata.py --refresh-snapshot``, run from the AIND network. The capsule itself
+``python code/metadata/write_metadata.py --refresh-snapshot``, run from the AIND network. The capsule itself
 never calls the internal metadata service (it can't reach it); refresh the snapshot whenever the
 project's funding changes.
 
@@ -45,7 +45,7 @@ UTC = timezone.utc
 
 # --- the asset this capsule produces --------------------------------------------------
 # The saved data asset's name. code/run stamps it with the UTC run date/time (AIND convention),
-# e.g. "LC_percentile_meshes_2026-07-09_14-30-05", and exports it so reproduce_meshes.py, the
+# e.g. "LC_percentile_meshes_2026-07-09_14-30-05", and exports it so produce_meshes.py, the
 # notebook, and this script all agree on the results/<ASSET_NAME>/ subfolder and metadata name.
 # The plain fallback below is only used for standalone runs that don't go through code/run.
 ASSET_NAME = os.environ.get("ASSET_NAME", "LC_percentile_meshes")
@@ -73,7 +73,7 @@ METADATA_SERVICE = "http://aind-metadata-service/api/v2"
 DATA_SUMMARY = (
     "Percentile-threshold 3D surface meshes delineating the locus coeruleus (LC) from "
     "pooled CCF-registered nuclear point calls across 8 SmartSPIM brains. Contents: "
-    "new_core_mesh.obj (67th-percentile core) and percentile_10..90.obj (density shells). "
+    "core_mesh.obj (67th-percentile core) and percentile_10..90.obj (density shells). "
     "Generated deterministically from the raw point calls (load -> reflect -> crop -> kNN "
     "density -> shell/interior selection -> surfel reconstruction -> watertight -> smooth -> "
     "repair) with no manual steps; every parameter is in lc_mesh.config, so the set is fully "
@@ -82,14 +82,14 @@ DATA_SUMMARY = (
 
 
 def asset_dir() -> Path:
-    """The asset subfolder results/<ASSET_NAME>/, where reproduce_meshes.py wrote the meshes;
+    """The asset subfolder results/<ASSET_NAME>/, where produce_meshes.py wrote the meshes;
     the metadata is written here too so the whole subfolder is one standalone data asset.
 
-    Mirrors reproduce_meshes.py: results root is /root/capsule/results on Code Ocean, else
+    Mirrors produce_meshes.py: results root is /root/capsule/results on Code Ocean, else
     the local results/ directory.
     """
     root = (Path("/root/capsule/results") if Path("/root/capsule/data").exists()
-            else Path(__file__).resolve().parent.parent / "results")
+            else Path(__file__).resolve().parent.parent.parent / "results")
     out = root / ASSET_NAME
     out.mkdir(parents=True, exist_ok=True)
     return out
