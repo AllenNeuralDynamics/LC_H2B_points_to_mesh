@@ -48,6 +48,11 @@ REPAIR = dict(
 # Full per-percentile recipe: generation parameters plus that percentile's own repair
 # settings. `repair=None` means no extra repair pass is applied (the watertight surfel
 # mesh is used as-is). Each mesh is generated deterministically from these values.
+# surfel radius scales linearly with the approximate size of the resulting mesh, i.e. 
+# a smaller mesh necessitates smaller surfels to define it. Conversely, resolution scales
+# inversely, as fewer vertices are required to define smaller meshes at an equal density.
+# repair params are specific to these cells and these density percentiles and were chosen to 
+# remedy specific caverns/tunneling that occurs in these specific examples.
 PERCENTILE_PARAMS = {
     10: dict(shell_lo=4, shell_hi=10, interior_hi=4, normals_k=40, surfel_radius=30.0, watertight_resolution=10000, smooth_iterations=5, repair={'pitch': 4, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 1}),
     20: dict(shell_lo=4, shell_hi=20, interior_hi=4, normals_k=40, surfel_radius=32.5, watertight_resolution=15000, smooth_iterations=5, repair={'pitch': 2, 'max_distance': 5, 'keep_distance': 2, 'shrink': None, 'extra_seal_passes': 0}),

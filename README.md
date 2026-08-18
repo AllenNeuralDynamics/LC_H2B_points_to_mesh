@@ -15,7 +15,7 @@ All ten meshes are generated end to end from the raw point calls, with no manual
 1. loads the CCF-registered point calls for all 8 samples,
 2. reflects them across the midline and crops to the LC,
 3. maps local kNN density, then
-4. for the core mesh and each percentile threshold, selects the shell/interior populations, reconstructs the surface, and repairs it into a watertight solid.
+4. for the core mesh and each percentile threshold, selects the shell/interior populations, reconstructs the surface, and repairs it into a watertight solid. 
 
 Every parameter (point ordering, density k, per-mesh shell/interior thresholds, surfel radius, watertight resolution, smoothing, and per-mesh repair settings) is documented in [`code/lc_mesh/config.py`](code/lc_mesh/config.py). See [Outputs](#outputs) for what the run produces and how it is laid out.
 
@@ -42,7 +42,7 @@ No previously generated LC mesh is attached; the meshes are produced from the po
 
 1. **Point loading & preprocessing**: load CCF-registered `.npy` point clouds, apply the coordinate transform (scale to µm, axis flips), reflect across the midline (x = 5700 µm) to pool both hemispheres, and crop to the LC bounding box.
 2. **Local density mapping**: mean distance to the k = 100 nearest neighbours per cell, converted to percentile ranks.
-3. **Mesh generation** (per mesh): select shell points (between a low and a high kNN percentile) and interior points (below a low percentile, used to orient normals); estimate normals via local PCA; reconstruct the surface with `point_cloud_utils.pointcloud_surfel_geometry`; convert to watertight with `pcu.make_mesh_watertight`; Laplacian-smooth (Open3D).
+3. **Mesh generation** (per mesh): select shell points (between a low and a high kNN percentile) and interior points (below a low percentile, used to orient normals); estimate normals via local PCA; reconstruct the surface with `point_cloud_utils.pointcloud_surfel_geometry`; convert to watertight with `pcu.make_mesh_watertight`; Laplacian-smooth (Open3D). NOTE: 'shell' refers to the external surface group of detected cells at a given density, not an anatomical declaration in CCF space. 
 4. **Mesh repair**: voxelize + distance-transform to detect near-surface caverns, drop deep internal vertices, seal holes by centroid fan-triangulation, clean broken/solitary faces, and verify watertightness. The core mesh and each percentile mesh use their own repair settings (due largely to density differences at the varying percentile cutoffs) from `config.py`.
 
 ## Library layout (`code/lc_mesh/`)

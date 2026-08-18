@@ -47,6 +47,12 @@ def load_ccf_points(data_root, keywords=None):
 
 def reflect_and_crop(df_all_points):
     """Reflect across the midline and crop to the LC bounding box (cell 7)."""
+    # imaged samples have cells in both hemispheres, left v. right hemisphere
+    # is tracked here by 'reflected' status while doubling the number of cells
+    # used for mesh generation. bbox cropping is to exclude detected cells in other
+    # brain regions. Manually selected, but leaving a wide berth around the LC
+    # The Cre line included some expression in cortex and cell detection included
+    # some false positives on the brain surface. The crop excluded these zones.
     df = df_all_points.copy()
     border = config.MIDLINE_X
     reflected_mask = df['x'] > border
